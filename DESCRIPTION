@@ -1,0 +1,51 @@
+Package: sullyplot
+Type: Package
+Title: sullyplot
+Version: 0.1.0
+Authors@R: 
+  person( given = "Kelian",
+          family = "Massa", 
+          role = c("aut", "cre"),
+          email = "kelian@isazi.ai"
+  )
+Author: Kelian Massa [aut, cre]
+Maintainer: Kelian Massa <kelian@isazi.ai>
+Description: Interface for automated plotting of graphs and dashboards using LLMs (initially via OpenAI API).
+License: file LICENSE
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 7.2.3
+Imports: 
+    himunge (>= 1.0.0),
+    magrittr,
+    utils,
+    Rcpp (>= 1.0.6),
+    rlang,
+    dplyr,
+    jsonlite,
+    parallel,
+    ggfortify,
+    ellipse,
+    ggplot2,
+    ggforce,
+    tidyr,
+    readr,
+    purrr,
+    tibble,
+    stringr,
+    forcats, 
+    broom,
+    modelr,
+    gridExtra,
+    reshape2,
+    plotly,
+    Cairo,
+    htmlwidgets,
+    infotheo
+Suggests:
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3
+Depends: 
+    R (>= 2.10)
+Date: 2021-12-22
+LinkingTo: Rcpp

@@ -1,6 +1,3 @@
-library(himunge)
-library(infotheo)
-
 #' make_df_summary_new
 #' Makes a convenient summary structure from an input dataframe, providing some summary stats of each column as well as some examples in a format that's easy to interrogate.
 #'

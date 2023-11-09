@@ -13,12 +13,13 @@
 #' @examples
 #' \dontrun{
 #' # Example usage with saving ggplots to a pdf
-#' my_plot <- auto_plot(iris_df, ["variety", "sepal.length"], "A box plot of sepal length for each variety to show the distribution of sepal length within each variety.", )
+#' my_plot <- auto_plot(iris_df, ["variety", "sepal.length"],
+#'  "A box plot of sepal length for each variety to show the distribution of sepal length within each variety.")
 #' print(my_plot)
 #' }
 #' @export
 auto_plot <- function(file_df, plot_columns, plot_description, num_code_attempts=5, code_model="gpt-4") {
-  log(sprintf("\nGenerating plot %d using the columns: %s", plot_idx, paste(plot_columns, collapse = ", ")))
+  log(sprintf("\nGenerating plot using the columns: %s", paste(plot_columns, collapse = ", ")))
   # Filter only the input columns that were chosen for this plot
   filtered_file_df <- filter_df(file_df, plot_columns)
   filtered_summary <- summarise_df(filtered_file_df, remove_cols=FALSE)
@@ -37,7 +38,7 @@ auto_plot <- function(file_df, plot_columns, plot_description, num_code_attempts
     attempt_results <- make_plot_attempt(code_string, file_df)
     if (attempt_results$success) {
       log(sprintf("Final code: \n%s\n", code_string))
-      return(list(code = code_string, plot = attempt_results$plot_obj))
+      return(list(code_string = code_string, plot_obj = attempt_results$plot_obj))
     } else if (attempt_idx < num_code_attempts) {
       log("Trying again with new prompt:")
       log(attempt_results$new_prompt)

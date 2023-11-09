@@ -32,7 +32,8 @@ This function automatically generates code and a `ggplot` object according to th
 \examples{
 \dontrun{
 # Example usage with saving ggplots to a pdf
-my_plot <- auto_plot(iris_df, ["variety", "sepal.length"], "A box plot of sepal length for each variety to show the distribution of sepal length within each variety.", )
+my_plot <- auto_plot(iris_df, ["variety", "sepal.length"],
+ "A box plot of sepal length for each variety to show the distribution of sepal length within each variety.")
 print(my_plot)
 }
 }

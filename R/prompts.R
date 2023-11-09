@@ -104,7 +104,7 @@ generate_code_prompt <- "I want to create this plot: %s
     ** DO NOT include library requirements (only write the code without library() or require() statements) **
     ** Make sure all plots have a concise title and axes are labelled **
     ** Your answer must be just the string of code, without any surrounding formatting like single or double inverted commas or backticks **
-    ** Pay attention to whcih axis each column is on and never change this (if I say counts on y axi do not change this) **
+    ** Pay attention to which axis each column is on and never change this (if I say counts on y axi do not change this) **
     Here is a summary of the columns in the input data frame df:
     %s"
 

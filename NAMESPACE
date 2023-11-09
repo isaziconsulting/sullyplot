@@ -3,6 +3,7 @@
 export("%>%")
 export(auto_dash)
 export(auto_plot)
+export(render_dashboard)
 export(summarise_df)
 importFrom(Rcpp,sourceCpp)
 importFrom(magrittr,"%>%")

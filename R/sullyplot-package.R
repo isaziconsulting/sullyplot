@@ -10,7 +10,7 @@
 #' 
 #' 0. `auto_dash_interactive` - Generates an interactive dashboard from the input file and returns the html.
 #' 1. `auto_dash` - Generates a dashboard from the input file and returns the list of `ggplot` objects.
-#' 2. `make_interactive` - Converts a list of `ggplot` objects into an interactive dashboard in html.
+#' 2. `render_dashboard` - Renders a list of `ggplot` objects as an interactive dashboard in html.
 #' 
 #' ### Automatically plot individual graphs
 #' 

@@ -14,7 +14,7 @@ The \code{sullyplot} R Package provides a framework for automated plotting of gr
 \enumerate{
 \item \code{auto_dash_interactive} - Generates an interactive dashboard from the input file and returns the html.
 \item \code{auto_dash} - Generates a dashboard from the input file and returns the list of \code{ggplot} objects.
-\item \code{make_interactive} - Converts a list of \code{ggplot} objects into an interactive dashboard in html.
+\item \code{render_dashboard} - Renders a list of \code{ggplot} objects as an interactive dashboard in html.
 }
 }
 

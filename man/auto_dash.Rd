@@ -7,6 +7,7 @@
 auto_dash(
   file_path,
   num_plots = 4,
+  custom_description = "",
   dash_model = "gpt-4",
   code_model = "gpt-4",
   num_design_attempts = 1,
@@ -20,6 +21,8 @@ auto_dash(
 \item{file_path}{The path to your input file. Must be .csv or .xlsx.}
 
 \item{num_plots}{The number of plots in your dashboard. Default is 4.}
+
+\item{custom_description}{An optional description to describe the custom dashboard you want.}
 
 \item{dash_model}{The name of the language model to use for designing the dashboard. Default 'gpt-4'.}
 
@@ -44,8 +47,9 @@ It allows you to specify the number of plots and a custom description of your da
 }
 \examples{
 \dontrun{
-# Example usage with saving ggplots to a pdf
-all_plots <- auto_dash("iris.csv")
+# Example usage of a custom dashboard with saving list of ggplots to a pdf
+all_plots <- auto_dash("auto-dash/kaggle_data/train/iris.csv", num_design_attempts=1, save_messages=TRUE, save_dir="sullyplot_messages", save_name="iris_custom",
+custom_description="Two box plots for lengths and widths (use two y axes per plot to show petal and sepal lengths/widths together), and 2 scatter plots of lengths vs widths. All should be grouped by variety.")
 pdf("my_dash.pdf", width = 20, height = 10 * length(all_plots) / 2)
 do.call(grid.arrange, c(all_plots, ncol = 2))
 dev.off()

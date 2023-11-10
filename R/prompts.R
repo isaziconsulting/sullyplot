@@ -126,7 +126,7 @@ generate_code_prompt <- "I want to create this plot: %s
     Multi-category scatter/line plots, should have different colours for each category
     Prediction elipses should have the same colour as their category.
     Always use `theme_grey`, the `Set3` colour palette from `RColorBrewer`.
-    Always plot with a colour (never plot in black).
+    Make the first colour from the palette the default plotting colour.
     
     ** Your code must be compatible with only the libraries ggfortify, ggplot2, ggcorrplot, tidyverse, dplyr, broom, Cairo, gridExtra, reshape2, modelr **
     ** Make sure the `plot_df` function returns a `ggplot` object **

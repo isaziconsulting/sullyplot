@@ -60,7 +60,7 @@ auto_dash <- function(file_path, num_plots = 4, custom_description="", dash_mode
   }
   
   # Start coding the dashboard
-  all_plots <- lapply(seq_len(num_plots), function(idx) {
+  all_plots <- lapply(seq_along(plot_info$input_columns), function(idx) {
     log(sprintf("\nGenerating plot %d using the columns: %s", idx, paste(plot_info$input_columns[[idx]], collapse = ", ")))
     tryCatch({
       auto_plot_results <- auto_plot(file_df, plot_info$input_columns[[idx]], plot_info$descriptions[[idx]], num_code_attempts, code_model, save_messages, save_dir, sprintf("%s_plot_%d", save_name, idx))

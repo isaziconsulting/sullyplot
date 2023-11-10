@@ -10,7 +10,10 @@ auto_dash(
   dash_model = "gpt-4",
   code_model = "gpt-4",
   num_design_attempts = 1,
-  num_code_attempts = 5
+  num_code_attempts = 5,
+  save_messages = FALSE,
+  save_dir = "",
+  save_name = "auto_dash"
 )
 }
 \arguments{
@@ -25,6 +28,12 @@ auto_dash(
 \item{num_design_attempts}{The number of iterations to improve on the dashboard design. Default is 1.}
 
 \item{num_code_attempts}{The maximum number of attempts to code your plot before failing - can take less if no errors are encountered in code generation. Default is 5.}
+
+\item{save_messages}{Whether to save chat messages and responses for each dashboard generation step, useful for finetuning. Default is false.}
+
+\item{save_dir}{The directory to save chat messages in.}
+
+\item{save_name}{The name to save chat messages under (will be suffixed for each step). Default is "auto_dash".}
 }
 \value{
 The list of `ggplot` objects representing the dashboard.

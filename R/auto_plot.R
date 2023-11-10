@@ -22,7 +22,6 @@
 #' }
 #' @export
 auto_plot <- function(file_df, plot_columns, plot_description, num_code_attempts=5, code_model="gpt-4", save_messages=FALSE, save_dir="", save_name="auto_plot") {
-  log(sprintf("\nGenerating plot using the columns: %s", paste(plot_columns, collapse = ", ")))
   # Filter only the input columns that were chosen for this plot
   filtered_file_df <- filter_df(file_df, plot_columns)
   filtered_summary <- summarise_df(filtered_file_df, remove_cols=FALSE)

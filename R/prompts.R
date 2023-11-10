@@ -94,10 +94,12 @@ generate_code_prompt <- "I want to create this plot: %s
 
     Box plots should always be coloured by category.
     Stacked bar/histogram plots should have different colours for each stack.
+    Make sure to use bins for histograms.
     Never colour histograms by count.
     Multi-category scatter/line plots, should have different colours for each category
-    Prediction elipses should have a coloured outline with transparent grey fill.
+    Prediction elipses should have the same colour as their category with a transparent fill.
     
+    ** The default theme should be black axes, a white background with grey grid lines, and light blue for data, never plot in black**
     ** Your code must be compatible with only the libraries ggfortify, ggplot2, ggcorrplot, tidyverse, dplyr, broom, Cairo, gridExtra, reshape2, modelr **
     ** Make sure the `plot_df` function returns a `ggplot` object **
     ** DO NOT include comments **

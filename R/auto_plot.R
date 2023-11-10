@@ -51,11 +51,12 @@ auto_plot <- function(file_df, plot_columns, plot_description, num_code_attempts
         role = c("user", "user"),
         content = c(code_gen_prompt, attempt_results$new_prompt)
       )
-      code_string <- continue_chat(chat_messages, system_message = system_prompt, model_name = code_model, max_tokens = 512, options = list(temperature = 0))
+      code_string <- continue_chat(chat_messages, system_message = system_prompt, model_name = code_model, max_tokens = 512, options = list(temperature = 0.6))
     } else if (!is.null(attempt_results$plot_obj)) {
       # If we're out of attempts but have a non-null plot object then use the plot object
       return(list(code_string = code_string, plot_obj = attempt_results$plot_obj))
     } else {
+      browser()
       stop("Ran out of attempts")
     }
   }

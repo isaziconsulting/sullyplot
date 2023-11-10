@@ -64,10 +64,11 @@ summarise_df <- function(df, remove_cols=TRUE, max_cols=10){
     # Filter out free text and primary key columns which are useless for EDA
     df_stats <- df_stats[!df_stats$type %in% c("Free Text"), ]
     tryCatch({
-      pk_cols <- himunge::find_primary_keys(df_prime, max_depth=4, timeout=30)
+      pk_cols <- himunge::find_primary_keys(df_prime, max_depth=1, timeout=30)
       log(sprintf("Filtering out the primary key columns: %s", paste(pk_cols, collapse = ", ")))
       if(length(pk_cols) > 3) {
-        stop("Too many primary key candidates found for filtering")
+        warning("Too many primary key candidates found for filtering")
+        df_stats_filtered <- df_stats
       }
       df_stats_filtered <- df_stats[!df_stats$name %in% unlist(pk_cols), ]
     }, error = function(e) {

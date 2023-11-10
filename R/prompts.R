@@ -143,7 +143,7 @@ generate_code_prompt <- "I want to create this plot: %s
 
 fix_error_prompt <- "Your previous code: %s
     Failed with: %s
-    Rewrite the function so that it does not encounter this error and respond with only the new code and nothing else."
+    Rewrite the function completely from scratch so that it does not encounter this error and respond with only the new code and nothing else."
 
 fix_low_quality_plot_prompt <- "Your previous code: %s
     Led to a low quality plot for this reason: %s

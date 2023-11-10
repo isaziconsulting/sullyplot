@@ -7,6 +7,9 @@
 #' @param plot_description The description of the plot you want.
 #' @param num_code_attempts The maximum number of attempts to code your plot before failing - can take less if no errors are encountered in code generation. Default is 5.
 #' @param code_model The name of the language model to use for coding individual plots. Default 'gpt-4'.
+#' @param save_messages Whether to save chat messages for the plotting code generation, useful for finetuning. Default is false.
+#' @param save_dir The directory to save chat messages in.
+#' @param save_name The name to save chat messages under. Default is "auto_plot".
 #'
 #' @return The list of `ggplot` objects representing the dashboard.
 #'
@@ -18,7 +21,7 @@
 #' print(my_plot)
 #' }
 #' @export
-auto_plot <- function(file_df, plot_columns, plot_description, num_code_attempts=5, code_model="gpt-4") {
+auto_plot <- function(file_df, plot_columns, plot_description, num_code_attempts=5, code_model="gpt-4", save_messages=FALSE, save_dir="", save_name="auto_plot") {
   log(sprintf("\nGenerating plot using the columns: %s", paste(plot_columns, collapse = ", ")))
   # Filter only the input columns that were chosen for this plot
   filtered_file_df <- filter_df(file_df, plot_columns)
@@ -38,6 +41,9 @@ auto_plot <- function(file_df, plot_columns, plot_description, num_code_attempts
     attempt_results <- make_plot_attempt(code_string, file_df)
     if (attempt_results$success) {
       log(sprintf("Final code: \n%s\n", code_string))
+      if(save_messages) {
+        save_chat_messages(data.frame(role = c("system", "user", "assistant"), content = c(system_prompt, code_gen_prompt, code_string)), sprintf("%s/%s.json", save_dir, save_name))
+      }
       return(list(code_string = code_string, plot_obj = attempt_results$plot_obj))
     } else if (attempt_idx < num_code_attempts) {
       log("Trying again with new prompt:")

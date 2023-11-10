@@ -9,6 +9,9 @@
 #' @param code_model The name of the language model to use for coding individual plots. Default 'gpt-4'.
 #' @param num_design_attempts The number of iterations to improve on the dashboard design. Default is 1.
 #' @param num_code_attempts The maximum number of attempts to code your plot before failing - can take less if no errors are encountered in code generation. Default is 5.
+#' @param save_messages Whether to save chat messages and responses for each dashboard generation step, useful for finetuning. Default is false.
+#' @param save_dir The directory to save chat messages in.
+#' @param save_name The name to save chat messages under (will be suffixed for each step). Default is "auto_dash".
 #'
 #' @return The list of `ggplot` objects representing the dashboard.
 #'
@@ -23,7 +26,7 @@
 #' 
 #' @importFrom rlang .data
 #' @export
-auto_dash <- function(file_path, num_plots = 4, dash_model="gpt-4", code_model="gpt-4", num_design_attempts=1, num_code_attempts=5) {
+auto_dash <- function(file_path, num_plots = 4, dash_model="gpt-4", code_model="gpt-4", num_design_attempts=1, num_code_attempts=5, save_messages=FALSE, save_dir="", save_name="auto_dash") {
   file_df <- read_file(file_path)
   summary <- summarise_df(file_df, remove_cols = TRUE, max_cols = max_cols)
   file_df <- summary$clean_df
@@ -44,10 +47,13 @@ auto_dash <- function(file_path, num_plots = 4, dash_model="gpt-4", code_model="
     log(response_json)
   }
   plot_info <- fromJSON(response_json, simplifyDataFrame = FALSE, simplifyMatrix = FALSE)
+  if(save_messages) {
+    save_chat_messages(data.frame(role = c("system", "user", "assistant"), content = c(system_prompt, user_prompt, response_json)), sprintf("%s/%s_dash.json", save_dir, save_name))
+  }
   
   # Start coding the dashboard
   all_plots <- lapply(seq_len(num_plots), function(idx) {
-    auto_plot_results <- auto_plot(file_df, plot_info$input_columns[[idx]], plot_info$descriptions[[idx]], num_code_attempts, code_model)
+    auto_plot_results <- auto_plot(file_df, plot_info$input_columns[[idx]], plot_info$descriptions[[idx]], num_code_attempts, code_model, save_messages, save_dir, sprintf("%s_plot_%d", save_name, idx))
     return(auto_plot_results$plot_obj)
   })
   return(all_plots)

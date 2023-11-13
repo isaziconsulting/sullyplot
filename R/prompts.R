@@ -98,7 +98,7 @@ Most importantly, replace any plots that do not follow the plot rules:
   Note for all cases where I refer to quantitatives, they must have n_distinct > 20; and for categoricals, they must have they type 'Categorical'
 
 Then, where appropriate and not present already, add or improve existing visual enhancements such as:
-- Add categorical columns to show relationships accross categories where relevant (Pay attention to the optional additional category columns in the plot rules)
+- Add categorical columns (they must have the type 'Categorical' in the summary 'type' column) to show relationships accross categories where relevant (pay attention to the optional additional category columns in the plot rules)
 - Add 95%% prediction elipses per category for any scatter plots that have a 3rd categorical column
 - Add lines of best fit with 5%% confidence intervals where relevant
 - Split plots into multiple y axes if there are too many columns to show for one graph.
@@ -122,14 +122,12 @@ generate_code_prompt <- "I want to create this plot: %s
     Box plots should always be coloured by category.
     Make sure to use bins for histograms.
     Never colour histograms by count.
-    Multi-category scatter/line plots, should have different colours for each category.
     Use `facet_wrap` when separate y-axes are specified.
     Draw prediction ellipses with `stat_ellipse` and the same colour as their category.
     Always use `theme_grey`, the `Set3` colour palette from `RColorBrewer`.
     Make the first colour from the palette the default plotting colour - never plot in black e.g. in single-category scatter plots this should be the default colour for dots.
     
     ** Only ever return a single function called `plot_df` **
-    ** Your code must be compatible with only the libraries ggfortify, ggplot2, ggcorrplot, tidyverse, dplyr, broom, Cairo, gridExtra, reshape2, modelr **
     ** Make sure the `plot_df` function returns a `ggplot` object **
     ** DO NOT include comments **
     ** Make sure to include library requirements with require() statements **
@@ -139,9 +137,9 @@ generate_code_prompt <- "I want to create this plot: %s
     Here is a summary of the columns in the input data frame df:
     %s"
 
-# ** The default theme should be black axes, a white background with grey grid lines, and light blue for data, never plot in black**
-# ** When colouring by category, use a colour palette of light blue, pink, light green, yellow, light red and orange **
-
+# Multi-category scatter/line plots, should have different colours for each category.
+# ** Your code must be compatible with only the libraries ggfortify, ggplot2, ggcorrplot, tidyverse, dplyr, broom, Cairo, gridExtra, reshape2, modelr **
+  
 fix_error_prompt <- "Your previous code:
     %s
     Failed with:

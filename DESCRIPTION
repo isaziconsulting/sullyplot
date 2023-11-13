@@ -22,27 +22,26 @@ Imports:
     rlang,
     dplyr,
     jsonlite,
-    parallel,
-    ggfortify,
-    ggplot2,
-    ggforce,
-    tidyr,
     readr,
-    purrr,
+    ggplot2,
     tibble,
     stringr,
-    forcats, 
+    plotly
+Suggests:
+    testthat (>= 3.0.0),
     broom,
+    ggforce,
+    tidyr,
+    purrr,
+    ggfortify,
+    infotheo,
+    forcats, 
     modelr,
     gridExtra,
     reshape2,
-    plotly,
     Cairo,
     htmltools,
-    htmlwidgets,
-    infotheo
-Suggests:
-    testthat (>= 3.0.0)
+    htmlwidgets
 Config/testthat/edition: 3
 Depends: 
     R (>= 2.10)

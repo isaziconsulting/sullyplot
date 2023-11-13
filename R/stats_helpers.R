@@ -64,6 +64,8 @@ summarise_df <- function(df, remove_cols=TRUE, max_cols=15){
   if (remove_cols) {
     # Filter out free text and primary key columns which are useless for EDA
     df_stats <- df_stats[!df_stats$type %in% c("Free Text"), ]
+    # Filter out columns with no information (no entropy)
+    df_stats <- df_stats[df_stats$information > 0, ]
     tryCatch({
       pk_cols <- himunge::find_primary_keys(df_prime, max_depth=1, timeout=30)
       log(sprintf("Filtering out the primary key columns: %s", paste(pk_cols, collapse = ", ")))

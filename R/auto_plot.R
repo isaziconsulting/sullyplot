@@ -56,7 +56,6 @@ auto_plot <- function(file_df, plot_columns, plot_description, num_code_attempts
       # If we're out of attempts but have a non-null plot object then use the plot object
       return(list(code_string = code_string, plot_obj = attempt_results$plot_obj))
     } else {
-      browser()
       stop("Ran out of attempts")
     }
   }

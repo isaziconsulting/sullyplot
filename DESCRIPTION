@@ -19,7 +19,6 @@ Imports:
     himunge (>= 1.0.0),
     magrittr,
     utils,
-    Rcpp (>= 1.0.6),
     rlang,
     dplyr,
     jsonlite,
@@ -48,5 +47,4 @@ Suggests:
 Config/testthat/edition: 3
 Depends: 
     R (>= 2.10)
-Date: 2021-12-22
-LinkingTo: Rcpp
+Date: 2023-11-13

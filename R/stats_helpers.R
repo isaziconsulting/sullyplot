@@ -1,4 +1,4 @@
-summarise_df <- function(df, remove_cols=TRUE, max_cols=10){
+summarise_df <- function(df, remove_cols=TRUE, max_cols=15){
   df_stats <- data.frame(name = names(df))
   df_and_fmt <- himunge::autoconvert_dataframe(df)
   df_prime <- df_and_fmt$df
@@ -52,7 +52,7 @@ summarise_df <- function(df, remove_cols=TRUE, max_cols=10){
   # df_stats$mean <- sapply(df_prime, function(x) if (is.numeric(x)) mean(x, na.rm = TRUE) else NA)
   
   df_stats <- df_stats %>% tidyr::unnest(quantile_stats)
-  df_stats$information <- sapply(df_prime, score_vector_information)
+  df_stats$information <- sapply(df_prime, himunge::score_vector_information)
   
   samples <- if(nrow(df_prime) < 3){
     dplyr::sample_n(df_prime, 3, replace = TRUE)

@@ -101,7 +101,7 @@ Then, where appropriate and not present already, add or improve existing visual 
 - Add categorical columns to show relationships accross categories where relevant (Pay attention to the optional additional category columns in the plot rules)
 - Add 95%% prediction elipses per category for any scatter plots that have a 3rd categorical column
 - Add lines of best fit with 5%% confidence intervals where relevant
-- Add multiple y axes for each category if there are too many categories or if you want two sets of categories.
+- Split plots into multiple y axes if there are too many columns to show for one graph.
 - Group related plots together - e.g. If there are two box/bar plots with the same categories use multiple separate y-axes to plot them as a single `ggplot` and add a new scatter plot.
 - Replace any redundant plots with different plots.
 
@@ -123,18 +123,20 @@ generate_code_prompt <- "I want to create this plot: %s
     Box plots should always be coloured by category.
     Make sure to use bins for histograms.
     Never colour histograms by count.
-    Multi-category scatter/line plots, should have different colours for each category
+    Multi-category scatter/line plots, should have different colours for each category.
+    Use `facet_wrap` when separate y-axes are specified.
     Prediction elipses should have the same colour as their category.
     Always use `theme_grey`, the `Set3` colour palette from `RColorBrewer`.
-    Make the first colour from the palette the default plotting colour.
+    Make the first colour from the palette the default plotting colour - always use this colour for single colour plots.
     
+    ** Only ever return a single function called `plot_df` **
     ** Your code must be compatible with only the libraries ggfortify, ggplot2, ggcorrplot, tidyverse, dplyr, broom, Cairo, gridExtra, reshape2, modelr **
     ** Make sure the `plot_df` function returns a `ggplot` object **
     ** DO NOT include comments **
     ** DO NOT include library requirements (only write the code without library() or require() statements) **
     ** Make sure all plots have a concise title and axes are labelled **
     ** Your answer must be just the string of code, without any surrounding formatting like single or double inverted commas or backticks **
-    ** Pay attention to which axis each column is on and never change this (if I say count on y axis do not change this) **
+    ** Make sure to place features on the axes specified in the plot description (e.g. type on x-axis and count on y-axis) **
     Here is a summary of the columns in the input data frame df:
     %s"
 

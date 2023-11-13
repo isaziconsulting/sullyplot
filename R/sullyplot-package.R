@@ -8,22 +8,17 @@
 #' 
 #' ### Automatically plot a full dashboard
 #' 
-#' 0. `auto_dash_interactive` - Generates an interactive dashboard from the input file and returns the html.
-#' 1. `auto_dash` - Generates a dashboard from the input file and returns the list of `ggplot` objects.
-#' 2. `render_dashboard` - Renders a list of `ggplot` objects as an interactive dashboard in html.
+#' 0. `auto_dash` - Generates a dashboard from the input file and returns the list of `ggplot` objects.
+#' 1. `render_dash_html` - Renders a list of `ggplot` objects as an interactive dashboard in html.
+#' 2. `render_dash_pdf` - Renders a list of `ggplot` objects as a pdf file.
 #' 
 #' ### Automatically plot individual graphs
 #' 
 #' 3. `auto_plot` - Generates a `ggplot` object from an input file, list of necessary columns, and plot description.
-#' 4. `attempt_code` - Attempts to plot the input file given the plotting code and returns the resulting status and plot object.
+#' 4. `make_plot_attempt` - Attempts to plot the input file given the plotting code and returns the resulting status and plot object.
 #'
 #' @md
 #' @docType package
 #' @name sullyplot
 #' 
-
-## usethis namespace: start
-#' @useDynLib sullyplot, .registration = TRUE
-#' @importFrom Rcpp sourceCpp
-## usethis namespace: end
 NULL

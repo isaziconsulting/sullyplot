@@ -12,12 +12,11 @@ Then simply use the functions from `sullyplot` with `sullyplot::function_name()`
 
 ### Automatically plot a full dashboard
 
-0. `auto_dash_interactive` - Generates an interactive dashboard from the input file and returns the html.
-1. `auto_dash` - Generates a dashboard from the input file and returns the list of `ggplot` objects.
-2. `make_interactive` - Converts a list of `ggplot` objects into an interactive dashboard in html.
+0. `auto_dash` - Generates a dashboard from the input file and returns the list of `ggplot` objects.
+1. `render_dash_html` - Renders a list of `ggplot` objects as an interactive dashboard in html.
+2. `render_dash_pdf` - Renders a list of `ggplot` objects as a pdf file.
 
 ### Automatically plot individual graphs
 
-3. `auto_plot` - Generates a `ggplot` object from an input file, list of necessary columns, and plot description.
-4. `auto_plot_code` - Same as `auto_plot` but only returns the plotting code.
-5. `attempt_code` - Attempts to plot the input file given the plotting code and returns the resulting status and plot object.
+3. `auto_plot` - Generates and runs the code to create a `ggplot` object from an input file, list of necessary columns, and plot description.
+4. `make_plot_attempt` - Attempts to plot the input file given the plotting code and returns the resulting status and plot object.

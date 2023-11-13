@@ -16,6 +16,7 @@
 #' render_dash_html(all_plots, filename="my_dash.html", display=TRUE)
 #' }
 #' 
+#' @importFrom plotly ggplotly
 #' @export
 render_dash_html <- function(all_plots, filename=NULL, display=FALSE) {
   # Convert each ggplot to a plotly object and then to an iframe
@@ -46,7 +47,7 @@ render_dash_html <- function(all_plots, filename=NULL, display=FALSE) {
           "</body></html>")
   )
   
-  if(is.null(filename)) {
+  if(!is.null(filename)) {
     if(!grepl("\\.html$", filename)) {
       stop(sprintf("Filename (%s) is not a .html file", filename))
     }

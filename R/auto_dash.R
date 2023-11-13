@@ -10,7 +10,7 @@
 #' @param code_model The name of the language model to use for coding individual plots. Default 'gpt-4'.
 #' @param num_design_attempts The number of iterations to improve on the dashboard design. Default is 2.
 #' @param num_code_attempts The maximum number of attempts to code your plot before failing - can take less if no errors are encountered in code generation. Default is 5.
-#' @param max_cols The maximum number of columns the LLM can 'see'. If more columns are provided in the file they will be sorted and the columns with the least NA and most information will be selected. Default is 15.
+#' @param max_cols The maximum number of columns the LLM can 'see'. If more columns are provided in the file they will be sorted and the columns with the least NA and most information will be selected. Default is 10.
 #' @param save_messages Whether to save chat messages and responses for each dashboard generation step, useful for finetuning. Default is false.
 #' @param save_dir The directory to save chat messages in.
 #' @param save_name The name to save chat messages under (will be suffixed for each step). Default is "auto_dash".
@@ -30,7 +30,7 @@
 #' @importFrom rlang .data
 #' @import jsonlite
 #' @export
-auto_dash <- function(file_path, num_plots = 4, custom_description="", dash_model="gpt-4", code_model="gpt-4", num_design_attempts=2, num_code_attempts=5, max_cols=15, save_messages=FALSE, save_dir="", save_name="auto_dash") {
+auto_dash <- function(file_path, num_plots = 4, custom_description="", dash_model="gpt-4", code_model="gpt-4", num_design_attempts=2, num_code_attempts=5, max_cols=10, save_messages=FALSE, save_dir="", save_name="auto_dash") {
   file_df <- read_file(file_path)
   summary <- summarise_df(file_df, remove_cols = TRUE, max_cols = max_cols)
   file_df <- summary$clean_df

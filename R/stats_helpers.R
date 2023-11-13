@@ -1,3 +1,4 @@
+#' @import himunge
 summarise_df <- function(df, remove_cols=TRUE, max_cols=15){
   df_stats <- data.frame(name = names(df))
   df_and_fmt <- himunge::autoconvert_dataframe(df)
@@ -89,6 +90,7 @@ summarise_df <- function(df, remove_cols=TRUE, max_cols=15){
   return(list(clean_df = df_prime, df_stats = df_stats))
 }
 
+#' @import infotheo
 mi_matrix <- function(file_df) {
   tryCatch({
     # Select numeric columns ignoring columns with less than 20 unique values

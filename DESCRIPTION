@@ -24,7 +24,6 @@ Imports:
     jsonlite,
     parallel,
     ggfortify,
-    ellipse,
     ggplot2,
     ggforce,
     tidyr,

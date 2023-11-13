@@ -27,7 +27,7 @@ Here is a summary of the columns in my input dataframe:
 
 ** Only output the JSON string; omit any surrounding formatting such as single or double inverted commas.**"
 
-describe_dashboard_prompt <- "Identify %d plots for a comprehensive data analysis and exploration dashboard using the data I give you. 
+describe_dashboard_prompt <- "Identify only %d plots for a comprehensive data analysis and exploration dashboard using the data I give you. 
 
 Explore the dataset with a variety of data analysis plots, ensure each plot captures significant and insightful relationships or patterns within the dataset. Choose plots that give a broad and diverse view of the dataset, highlighting different aspects and relationships.
 Ensure there is never more than two of a plot type.
@@ -105,7 +105,7 @@ Then, where appropriate and not present already, add or improve existing visual 
 - Group related plots together - e.g. If there are two box/bar plots with the same categories use multiple separate y-axes to plot them as a single `ggplot` and add a new scatter plot.
 - Replace any redundant plots with different plots.
 
-Finally, make sure there are still at least %d plots in total and add plots if there aren't.
+Finally, make sure there are still exactly %d plot descriptions in total and add/remove plots if there aren't.
 
 Your previous response was:
 %s
@@ -124,7 +124,7 @@ generate_code_prompt <- "I want to create this plot: %s
     Never colour histograms by count.
     Multi-category scatter/line plots, should have different colours for each category.
     Use `facet_wrap` when separate y-axes are specified.
-    Prediction elipses should have the same colour as their category.
+    Draw prediction ellipses with `stat_ellipse` and the same colour as their category.
     Always use `theme_grey`, the `Set3` colour palette from `RColorBrewer`.
     Make the first colour from the palette the default plotting colour - never plot in black e.g. in single-category scatter plots this should be the default colour for dots.
     
@@ -142,8 +142,10 @@ generate_code_prompt <- "I want to create this plot: %s
 # ** The default theme should be black axes, a white background with grey grid lines, and light blue for data, never plot in black**
 # ** When colouring by category, use a colour palette of light blue, pink, light green, yellow, light red and orange **
 
-fix_error_prompt <- "Your previous code: %s
-    Failed with: %s
+fix_error_prompt <- "Your previous code:
+    %s
+    Failed with:
+    %s
     Rewrite the function completely from scratch so that it does not encounter this error and respond with only the new code and nothing else."
 
 fix_low_quality_plot_prompt <- "Your previous code: %s

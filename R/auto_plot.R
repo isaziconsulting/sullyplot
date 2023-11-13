@@ -33,10 +33,16 @@ auto_plot <- function(file_df, plot_columns, plot_description, num_code_attempts
   
   # Make an initial attempt at coding the plot
   chat_messages <- data.frame(role = "user",  content = code_gen_prompt)
+  all_chat_messages <- chat_messages
   code_string <- continue_chat(chat_messages, system_message = system_prompt, model_name = code_model, max_tokens = 512, options = list(temperature = 0))
+  all_chat_messages <- data.frame(role = c("user", "assistant"), content = c(code_gen_prompt, code_string))
+  
   
   # Use a feedback loop to keep re-attempting to code the plot until either the plot is satisfactory or it runs out of attempts
   for(attempt_idx in 1:num_code_attempts) {
+    if(save_messages) {
+      save_chat_messages(all_chat_messages, sprintf("%s/%s_all.json", save_dir, save_name))
+    }
     attempt_results <- make_plot_attempt(code_string, file_df)
     if (attempt_results$success) {
       log(sprintf("Final code: \n%s\n", code_string))
@@ -52,6 +58,7 @@ auto_plot <- function(file_df, plot_columns, plot_description, num_code_attempts
         content = c(code_gen_prompt, attempt_results$new_prompt)
       )
       code_string <- continue_chat(chat_messages, system_message = system_prompt, model_name = code_model, max_tokens = 512, options = list(temperature = 0.6))
+      all_chat_messages <- rbind(all_chat_messages, data.frame(role = c("user", "assistant"), content = c(attempt_results$new_prompt, code_string)))
     } else if (!is.null(attempt_results$plot_obj)) {
       # If we're out of attempts but have a non-null plot object then use the plot object
       return(list(code_string = code_string, plot_obj = attempt_results$plot_obj))

@@ -12,7 +12,7 @@ auto_dash(
   code_model = "gpt-4",
   num_design_attempts = 2,
   num_code_attempts = 5,
-  max_cols = 15,
+  max_cols = 10,
   save_messages = FALSE,
   save_dir = "",
   save_name = "auto_dash"
@@ -33,7 +33,7 @@ auto_dash(
 
 \item{num_code_attempts}{The maximum number of attempts to code your plot before failing - can take less if no errors are encountered in code generation. Default is 5.}
 
-\item{max_cols}{The maximum number of columns the LLM can 'see'. If more columns are provided in the file they will be sorted and the columns with the least NA and most information will be selected. Default is 15.}
+\item{max_cols}{The maximum number of columns the LLM can 'see'. If more columns are provided in the file they will be sorted and the columns with the least NA and most information will be selected. Default is 10.}
 
 \item{save_messages}{Whether to save chat messages and responses for each dashboard generation step, useful for finetuning. Default is false.}
 
@@ -53,9 +53,7 @@ It allows you to specify the number of plots and a custom description of your da
 # Example usage of a custom dashboard with saving list of ggplots to a pdf
 all_plots <- auto_dash("auto-dash/kaggle_data/train/iris.csv", num_design_attempts=1, save_messages=TRUE, save_dir="sullyplot_messages", save_name="iris_custom",
 custom_description="Two box plots for lengths and widths (use two y axes per plot to show petal and sepal lengths/widths together), and 2 scatter plots of lengths vs widths. All should be grouped by variety.")
-pdf("my_dash.pdf", width = 20, height = 10 * length(all_plots) / 2)
-do.call(grid.arrange, c(all_plots, ncol = 2))
-dev.off()
+render_dash_pdf(all_plots, "my_dash.pdf")
 }
 
 }

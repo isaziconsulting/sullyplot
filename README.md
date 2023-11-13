@@ -19,4 +19,3 @@ Then simply use the functions from `sullyplot` with `sullyplot::function_name()`
 ### Automatically plot individual graphs
 
 3. `auto_plot` - Generates and runs the code to create a `ggplot` object from an input file, list of necessary columns, and plot description.
-4. `make_plot_attempt` - Attempts to plot the input file given the plotting code and returns the resulting status and plot object.

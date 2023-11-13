@@ -22,13 +22,10 @@
 #' # Example usage of a custom dashboard with saving list of ggplots to a pdf
 #' all_plots <- auto_dash("auto-dash/kaggle_data/train/iris.csv", num_design_attempts=1, save_messages=TRUE, save_dir="sullyplot_messages", save_name="iris_custom",
 #' custom_description="Two box plots for lengths and widths (use two y axes per plot to show petal and sepal lengths/widths together), and 2 scatter plots of lengths vs widths. All should be grouped by variety.")
-#' pdf("my_dash.pdf", width = 20, height = 10 * length(all_plots) / 2)
-#' do.call(grid.arrange, c(all_plots, ncol = 2))
-#' dev.off()
+#' render_dash_pdf(all_plots, "my_dash.pdf")
 #' }
 #' 
 #' @importFrom rlang .data
-#' @import jsonlite
 #' @export
 auto_dash <- function(file_path, num_plots = 4, custom_description="", dash_model="gpt-4", code_model="gpt-4", num_design_attempts=2, num_code_attempts=5, max_cols=10, save_messages=FALSE, save_dir="", save_name="auto_dash") {
   file_df <- read_file(file_path)
@@ -45,20 +42,26 @@ auto_dash <- function(file_path, num_plots = 4, custom_description="", dash_mode
     # user_prompt <- sprintf(describe_dashboard_prompt, num_plots, to_csv(summary_df))
   log(user_prompt)
   chat_messages <- data.frame(role = "user", content = user_prompt)
+  all_chat_messages <- chat_messages
   response_json <- continue_chat(chat_messages, system_message = system_prompt, model_name = dash_model, max_tokens = 768, options = list(temperature = 0))
+  all_chat_messages <- data.frame(role = c("user", "assistant"), content = c(user_prompt, response_json))
+  
   log("Initial dashboard design")
   log(response_json)
   if (num_design_attempts > 0) {
     for(attempt_idx in 1:num_design_attempts) {
       log(sprintf("Improved dashboard design v%d", attempt_idx))
-      chat_messages_new <- rbind(chat_messages, data.frame(role = "user", content = sprintf(improve_dashboard_prompt, num_plots, response_json)))
+      improve_dashboard_message <- sprintf(improve_dashboard_prompt, num_plots, response_json)
+      chat_messages_new <- rbind(chat_messages, data.frame(role = "user", content = improve_dashboard_message))
       response_json <- continue_chat(chat_messages_new, system_message = system_prompt, model_name = dash_model, max_tokens = 768, options = list(temperature = 0))
+      all_chat_messages <- rbind(all_chat_messages, data.frame(role = c("user", "assistant"), content = c(improve_dashboard_message, response_json)))
       log(response_json)
     }
   }
-  plot_info <- fromJSON(response_json, simplifyDataFrame = FALSE, simplifyMatrix = FALSE)
+  plot_info <- jsonlite::fromJSON(response_json, simplifyDataFrame = FALSE, simplifyMatrix = FALSE)
   if(save_messages) {
     save_chat_messages(data.frame(role = c("system", "user", "assistant"), content = c(system_prompt, user_prompt, response_json)), sprintf("%s/%s_dash.json", save_dir, save_name))
+    save_chat_messages(all_chat_messages, sprintf("%s/%s_dash_all.json", save_dir, save_name))
   }
   
   # Start coding the dashboard

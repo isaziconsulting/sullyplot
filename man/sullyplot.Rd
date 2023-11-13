@@ -21,7 +21,6 @@ The \code{sullyplot} R Package provides a framework for automated plotting of gr
 \subsection{Automatically plot individual graphs}{
 \enumerate{
 \item \code{auto_plot} - Generates a \code{ggplot} object from an input file, list of necessary columns, and plot description.
-\item \code{make_plot_attempt} - Attempts to plot the input file given the plotting code and returns the resulting status and plot object.
 }
 }
 

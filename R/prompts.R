@@ -105,7 +105,7 @@ Then, where appropriate and not present already, add or improve existing visual 
 - Group related plots together - e.g. If there are two box/bar plots with the same categories use multiple separate y-axes to plot them as a single `ggplot` and add a new scatter plot.
 - Replace any redundant plots with different plots.
 
-Finally, make sure there are still exactly %d plot descriptions in total and add/remove plots if there aren't.
+Finally, make sure there are at least %d plots in total and add plots if there aren't.
 
 Your previous response was:
 %s

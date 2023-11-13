@@ -15,6 +15,7 @@
 #' render_dash_pdf(all_plots, filename="my_dash.pdf")
 #' }
 #' 
+#' @importFrom gridExtra grid.arrange
 #' @export
 render_dash_pdf <- function(all_plots, filename) {
   if(!grepl("\\.pdf$", filename)) {

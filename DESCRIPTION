@@ -26,7 +26,10 @@ Imports:
     ggplot2,
     tibble,
     stringr,
-    plotly
+    plotly,
+    gridExtra,
+    htmltools,
+    htmlwidgets
 Suggests:
     testthat (>= 3.0.0),
     broom,
@@ -37,11 +40,8 @@ Suggests:
     infotheo,
     forcats, 
     modelr,
-    gridExtra,
     reshape2,
-    Cairo,
-    htmltools,
-    htmlwidgets
+    Cairo
 Config/testthat/edition: 3
 Depends: 
     R (>= 2.10)

@@ -15,7 +15,6 @@
 #' ### Automatically plot individual graphs
 #' 
 #' 3. `auto_plot` - Generates a `ggplot` object from an input file, list of necessary columns, and plot description.
-#' 4. `make_plot_attempt` - Attempts to plot the input file given the plotting code and returns the resulting status and plot object.
 #'
 #' @md
 #' @docType package

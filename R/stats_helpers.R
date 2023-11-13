@@ -93,7 +93,7 @@ mi_matrix <- function(file_df) {
   tryCatch({
     # Select numeric columns ignoring columns with less than 20 unique values
     numeric_columns <- file_df %>% 
-      select(where(~is.numeric(.x) && length(unique(.x)) >= 20))
+      dplyr::select(where(~is.numeric(.x) && length(unique(.x)) >= 20))
     if (ncol(numeric_columns) < 2) {
       return("")
     }

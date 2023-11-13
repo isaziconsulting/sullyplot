@@ -28,6 +28,7 @@
 #' }
 #' 
 #' @importFrom rlang .data
+#' @import jsonlite
 #' @export
 auto_dash <- function(file_path, num_plots = 4, custom_description="", dash_model="gpt-4", code_model="gpt-4", num_design_attempts=2, num_code_attempts=5, max_cols=15, save_messages=FALSE, save_dir="", save_name="auto_dash") {
   file_df <- read_file(file_path)
@@ -55,7 +56,7 @@ auto_dash <- function(file_path, num_plots = 4, custom_description="", dash_mode
       log(response_json)
     }
   }
-  plot_info <- jsonlite::fromJSON(response_json, simplifyDataFrame = FALSE, simplifyMatrix = FALSE)
+  plot_info <- fromJSON(response_json, simplifyDataFrame = FALSE, simplifyMatrix = FALSE)
   if(save_messages) {
     save_chat_messages(data.frame(role = c("system", "user", "assistant"), content = c(system_prompt, user_prompt, response_json)), sprintf("%s/%s_dash.json", save_dir, save_name))
   }

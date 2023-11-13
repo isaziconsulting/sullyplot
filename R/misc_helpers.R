@@ -42,7 +42,7 @@ to_csv <- function(df) {
 }
 
 save_chat_messages <- function(df, file_path) {
-  json_data <- toJSON(list(messages = df), auto_unbox = TRUE, pretty = TRUE)
+  json_data <- jsonlite::toJSON(list(messages = df), auto_unbox = TRUE, pretty = TRUE)
   write(json_data, file = file_path)
 }
 

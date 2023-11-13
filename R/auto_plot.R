@@ -20,6 +20,10 @@
 #'  "A box plot of sepal length for each variety to show the distribution of sepal length within each variety.")
 #' print(my_plot)
 #' }
+#' @import dplyr
+#' @import tidyr
+#' @import ggplot2
+#' @import RColorBrewer
 #' @export
 auto_plot <- function(file_df, plot_columns, plot_description, num_code_attempts=5, code_model="gpt-4", save_messages=FALSE, save_dir="", save_name="auto_plot") {
   # Filter only the input columns that were chosen for this plot

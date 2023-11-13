@@ -119,7 +119,6 @@ generate_code_prompt <- "I want to create this plot: %s
     Make sure to handle NA values.
     Make sure continuous numeric ticks are rounded to 2 decimal places, and numeric x axis ticks are rotated.
     
-    For scatter plots with categoricals, always include the 95%% predictions elipses per category.
     Box plots should always be coloured by category.
     Make sure to use bins for histograms.
     Never colour histograms by count.
@@ -127,13 +126,13 @@ generate_code_prompt <- "I want to create this plot: %s
     Use `facet_wrap` when separate y-axes are specified.
     Prediction elipses should have the same colour as their category.
     Always use `theme_grey`, the `Set3` colour palette from `RColorBrewer`.
-    Make the first colour from the palette the default plotting colour - always use this colour for single colour plots.
+    Make the first colour from the palette the default plotting colour - never plot in black e.g. in single-category scatter plots this should be the default colour for dots.
     
     ** Only ever return a single function called `plot_df` **
     ** Your code must be compatible with only the libraries ggfortify, ggplot2, ggcorrplot, tidyverse, dplyr, broom, Cairo, gridExtra, reshape2, modelr **
     ** Make sure the `plot_df` function returns a `ggplot` object **
     ** DO NOT include comments **
-    ** DO NOT include library requirements (only write the code without library() or require() statements) **
+    ** Make sure to include library requirements with require() statements **
     ** Make sure all plots have a concise title and axes are labelled **
     ** Your answer must be just the string of code, without any surrounding formatting like single or double inverted commas or backticks **
     ** Make sure to place features on the axes specified in the plot description (e.g. type on x-axis and count on y-axis) **

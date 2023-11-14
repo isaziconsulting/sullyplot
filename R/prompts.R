@@ -8,6 +8,8 @@ describe_dashboard_prompt <- "Design a data analysis dashboard consisting of %d 
 
 Explore the dataset with a variety of data analysis plots. Choose plots that give a broad and diverse view of the dataset, highlighting different aspects and relationships.
 
+Ensure the plots each show different relationships in the data.
+
 *** DASHBOARD RULES ***
   Make sure all plots can be plotted as `ggplot` objects.
   Quantitatives must be numerics/integers and have n_distinct > 20 in the summary.
@@ -66,6 +68,8 @@ Here is a summary of the columns in my input dataframe:
 improve_dashboard_prompt <- "Can you improve on previous response by replacing plot descriptions and their input columns according to the following:
 
 Never reduce the amount information in plots e.g. never separate one plot into two
+
+Ensure the plots each show different relationships in the data.
 
 Most importantly, replace any plots that do not follow the previosuly stated DASHBOARD RULES.
 

@@ -6,11 +6,11 @@
 \usage{
 auto_dash(
   file_path,
-  num_plots = 4,
+  num_plots = 6,
   custom_description = "",
   dash_model = "gpt-4",
   code_model = "gpt-4",
-  num_design_attempts = 2,
+  num_design_attempts = 1,
   num_code_attempts = 5,
   max_cols = 10,
   save_messages = FALSE,
@@ -21,7 +21,7 @@ auto_dash(
 \arguments{
 \item{file_path}{The path to your input file. Must be .csv or .xlsx.}
 
-\item{num_plots}{The number of plots in your dashboard. Default is 4.}
+\item{num_plots}{The number of plots in your dashboard. Default is 6.}
 
 \item{custom_description}{An optional description to describe the custom dashboard you want.}
 
@@ -29,7 +29,7 @@ auto_dash(
 
 \item{code_model}{The name of the language model to use for coding individual plots. Default 'gpt-4'.}
 
-\item{num_design_attempts}{The number of iterations to improve on the dashboard design. Default is 2.}
+\item{num_design_attempts}{The number of iterations to improve on the dashboard design. Default is 1.}
 
 \item{num_code_attempts}{The maximum number of attempts to code your plot before failing - can take less if no errors are encountered in code generation. Default is 5.}
 

@@ -4,11 +4,11 @@
 #' It allows you to specify the number of plots and a custom description of your dashboard.
 #'
 #' @param file_path The path to your input file. Must be .csv or .xlsx.
-#' @param num_plots The number of plots in your dashboard. Default is 4.
+#' @param num_plots The number of plots in your dashboard. Default is 6.
 #' @param custom_description An optional description to describe the custom dashboard you want.
 #' @param dash_model The name of the language model to use for designing the dashboard. Default 'gpt-4'.
 #' @param code_model The name of the language model to use for coding individual plots. Default 'gpt-4'.
-#' @param num_design_attempts The number of iterations to improve on the dashboard design. Default is 2.
+#' @param num_design_attempts The number of iterations to improve on the dashboard design. Default is 1.
 #' @param num_code_attempts The maximum number of attempts to code your plot before failing - can take less if no errors are encountered in code generation. Default is 5.
 #' @param max_cols The maximum number of columns the LLM can 'see'. If more columns are provided in the file they will be sorted and the columns with the least NA and most information will be selected. Default is 10.
 #' @param save_messages Whether to save chat messages and responses for each dashboard generation step, useful for finetuning. Default is false.
@@ -27,7 +27,7 @@
 #' 
 #' @importFrom rlang .data
 #' @export
-auto_dash <- function(file_path, num_plots = 4, custom_description="", dash_model="gpt-4", code_model="gpt-4", num_design_attempts=2, num_code_attempts=5, max_cols=10, save_messages=FALSE, save_dir="", save_name="auto_dash") {
+auto_dash <- function(file_path, num_plots = 6, custom_description="", dash_model="gpt-4", code_model="gpt-4", num_design_attempts=1, num_code_attempts=5, max_cols=10, save_messages=FALSE, save_dir="", save_name="auto_dash") {
   file_df <- read_file(file_path)
   summary <- summarise_df(file_df, remove_cols = TRUE, max_cols = max_cols)
   file_df <- summary$clean_df

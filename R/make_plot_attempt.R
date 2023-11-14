@@ -1,11 +1,12 @@
 make_plot_attempt <- function(code_string, file_df) {
   tryCatch({
     # First attempt to evaluate the code_string
-    # log("Function code:")
-    # print(code_string)
     eval(parse(text = code_string))
     p <- plot_df(file_df)
     if (!inherits(p, "ggplot")) {
+      if(class(p)[1] == "gtable" || class(p)[1] == "list") {
+        stop("The returned object is of class '", class(p)[1], "', not 'ggplot', make sure to use `facet_wrap` for the separate y-axes rather than rendering a group of separate `ggplot` objects.")
+      }
       stop("The returned object is of class '", class(p)[1], "', not 'ggplot'.")
     }
     # Display the plot

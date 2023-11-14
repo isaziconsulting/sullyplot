@@ -86,14 +86,14 @@ Your previous response was:
 
 generate_code_prompt <- "I want to create this plot: %s
     Please provide a function in R called 'plot_df' that takes a dataframe 'df' as its argument, processes it, and then directly returns a `ggplot` object.
-    The function should handle the necessary data transformation, statistical analyses, and plotting within it.
+    The function should handle the necessary data transformation, statistical analyses, and plotting within it. If the plot includes separate y-axes, use `face_wrap` to show them.
 
     *** STYLING RULES ***
       Box plots should always be coloured by category.
       Make sure to use bins for histograms.
       Never colour histograms by count.
       Use `facet_wrap` when separate y-axes are specified.
-      Draw prediction ellipses with `stat_ellipse` and the same colour as their category.
+      Draw prediction ellipses with `ggplot2::stat_ellipse` and the same colour as their category.
       Always use `theme_grey`, the `Set3` colour palette from `RColorBrewer`.
       Make the first colour from the palette the default plotting colour - never plot in black e.g. in single-category scatter plots this should be the default colour for dots.
       Continuous numeric ticks must be rounded to 2 decimal places, and numeric x axis ticks must be rotated.

@@ -24,7 +24,7 @@ is_low_quality_plot <- function(plot_obj, data_point_threshold = 10,  min_bars_t
       }
       # Max bars only applies to bar charts (can have many histogram bins)
       else if (num_bars > max_bars_threshold) {
-        return(list(status = TRUE, message = sprintf("The bar chart has too many (%d) visible bars. Select a subset of the %d most interesting categories.", num_bars, max_bars_threshold)))
+        return(list(status = TRUE, message = sprintf("The bar chart has too many (%d) visible bars. Either use a histogram with bins if the data is numeric, or otherwise select a subset of the %d most interesting categories.", num_bars, max_bars_threshold)))
       }
     }
     

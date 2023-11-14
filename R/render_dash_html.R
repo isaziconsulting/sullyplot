@@ -16,18 +16,17 @@
 #' render_dash_html(all_plots, filename="my_dash.html", display=TRUE)
 #' }
 #' 
-#' @importFrom plotly ggplotly
 #' @export
 render_dash_html <- function(all_plots, filename=NULL, display=FALSE) {
   # Convert each ggplot to a plotly object and then to an iframe
   iframes <- lapply(all_plots, function(plot) {
-    p_ly <- ggplotly(plot)
+    p_ly <- plotly::ggplotly(plot)
     # Create a temporary file to save the HTML content
     tmpfile <- tempfile(fileext = ".html")
     htmlwidgets::saveWidget(p_ly, file = tmpfile, selfcontained = TRUE)
     
     # Create the iframe tag with the content of the temporary HTML file
-    iframe <- tags$iframe(
+    iframe <- htmltools::tags$iframe(
       srcdoc = paste(readLines(tmpfile), collapse = "\n"),
       width = "49%", height = "400px", frameborder = "0"
     )
@@ -38,10 +37,10 @@ render_dash_html <- function(all_plots, filename=NULL, display=FALSE) {
   })
   
   # Assemble the iframes into a flexbox div
-  flex_div <- do.call(tags$div, c(list(style = "display: flex; flex-wrap: wrap;"), iframes))
+  flex_div <- do.call(htmltools::tags$div, c(list(style = "display: flex; flex-wrap: wrap;"), iframes))
   
   # Wrap in a complete HTML document
-  html_page <- HTML(
+  html_page <- htmltools::HTML(
     paste("<!DOCTYPE html><html><head><meta charset='utf-8'><title>Dashboard</title></head><body>",
           as.character(flex_div),
           "</body></html>")

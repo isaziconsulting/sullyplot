@@ -1,4 +1,3 @@
-#' @import himunge
 summarise_df <- function(df, remove_cols=TRUE, max_cols=15){
   df_stats <- data.frame(name = names(df))
   df_and_fmt <- himunge::autoconvert_dataframe(df)
@@ -68,12 +67,15 @@ summarise_df <- function(df, remove_cols=TRUE, max_cols=15){
     df_stats <- df_stats[df_stats$information > 0, ]
     tryCatch({
       pk_cols <- himunge::find_primary_keys(df_prime, max_depth=1, timeout=30)
-      log(sprintf("Filtering out the primary key columns: %s", paste(pk_cols, collapse = ", ")))
-      if(length(pk_cols) > 3) {
-        warning("Too many primary key candidates found for filtering")
+      # We are only looking for single-column primary keys, so if the returned primary key is longer
+      # this means there was an error and all columns were returned
+      if(length(pk_cols[[1]]) > 1) {
+        log("Too many primary key candidates found for filtering")
         df_stats_filtered <- df_stats
+      } else {
+        log(sprintf("Filtering out the primary key columns: %s", paste(pk_cols, collapse = ", ")))
+        df_stats_filtered <- df_stats[!df_stats$name %in% unlist(pk_cols), ]
       }
-      df_stats_filtered <- df_stats[!df_stats$name %in% unlist(pk_cols), ]
     }, error = function(e) {
       log(e$message)
       df_stats_filtered <- df_stats
@@ -92,7 +94,6 @@ summarise_df <- function(df, remove_cols=TRUE, max_cols=15){
   return(list(clean_df = df_prime, df_stats = df_stats))
 }
 
-#' @import infotheo
 mi_matrix <- function(file_df) {
   tryCatch({
     # Select numeric columns ignoring columns with less than 20 unique values
@@ -112,8 +113,8 @@ mi_matrix <- function(file_df) {
         if (i == j) {
           mi_values[i, j] <- 0
         } else {
-          mi_values[i, j] <- mutinformation(discretize(numeric_columns[[i]]),
-                                            discretize(numeric_columns[[j]]))
+          mi_values[i, j] <- infotheo::mutinformation(infotheo::discretize(numeric_columns[[i]]),
+                                                      infotheo::discretize(numeric_columns[[j]]))
         }
       }
     }

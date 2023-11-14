@@ -14,7 +14,7 @@ Explore the dataset with a variety of data analysis plots. Choose plots that giv
   Categoricals must have the type 'Categorical' in the summary.
   Any variables referenced in plot descriptions must also be in the provided summary and list of input columns - never reference a varaible that does not refer to a specific column.
   Here are the available plot types & rules:
-    scatter plots - must have quantitatives on the x and y axes, and an optional 3rd categorical or quantitative column for colour.
+    scatter plots - must have quantitatives on the x and y axes, and an optional 3rd categorical or quantitative column for colour. Never place a categorical on the x or y axis.
     line plot - must have a DateTime column on the x-axis, a quantitative on the y axis, and an optional 3rd categorical column for colour.
     box plots - must have a categorical on the x axis and a quantitative on the y axis. Can have multiple quantitative y-axes if related, but you must explicitly state how they should be used together (e.g. separate y-axes or an additional category for which quantitative it is).
     histogram - must have a quantitative on the x-axis in bins, counts on the y axis, and an optional 2nd categorical column for stacked bars, multiple axes, or colour.
@@ -47,7 +47,7 @@ describe_custom_dashboard_prompt <- "Design this dashboard consisting of %d plot
   Categoricals must have the type 'Categorical' in the summary.
   Any variables referenced in plot descriptions must also be in the provided summary and list of input columns - never reference a varaible that does not refer to a specific column.
   Here are the available plot types & rules:
-    scatter plots - must have quantitatives on the x and y axes, and an optional 3rd categorical or quantitative column for colour.
+    scatter plots - must have quantitatives on the x and y axes, and an optional 3rd categorical or quantitative column for colour (if you use a quantitative for colour, specify to use a continuous colour scale). Never place a categorical on the x or y axis.
     line plot - must have a DateTime column on the x-axis, a quantitative on the y axis, and an optional 3rd categorical column for colour.
     box plots - must have a categorical on the x axis and a quantitative on the y axis. Can have multiple quantitative y-axes if related, but you must explicitly state how they should be used together (e.g. separate y-axes or an additional category for which quantitative it is).
     histogram - must have a quantitative on the x-axis in bins, counts on the y axis, and an optional 2nd categorical column for stacked bars, multiple axes, or colour.
@@ -71,17 +71,17 @@ Most importantly, replace any plots that do not follow the previosuly stated DAS
 
 Then, where appropriate and not present already, add or improve existing visual enhancements such as:
 - Add categorical columns if available in the summary to show relationships accross different categories where relevant
-- Add 95%% prediction elipses per category for any scatter plots that have a 3rd categorical column
-- Add lines of best fit with 5%% confidence intervals where relevant
-- Group related plots together - e.g. If there are two box/bar plots with the same categories use multiple separate y-axes to plot them as a single `ggplot`.
-- Replace any redundant plots with different plots.
+- Add 95%% prediction elipses per category for any scatter plots that have a categorical column
+- Add lines of best fit with 5%% confidence intervals to line plots, and scatter plots that do not have a categorical column
+- Group related plots together - e.g. If there are two box/bar plots with the same categories use multiple separate y-axes to plot them as a single `ggplot`. Or if there are two scatter plots with the same x-axis, group them into one `ggplot` with separate y-axes.
+- Replace any redundant plots with different plots
 
 Finally, make sure there are at least %d plots in total and add new plots if there aren't.
 
 Your previous response was:
 %s
 
-** Make sure your dashboar designs meets the previously stated DASHBOARD RULES **
+** Make sure your dashboard designs meets the previously stated DASHBOARD RULES **
 ** Only output the modified JSON string. **"
 
 generate_code_prompt <- "I want to create this plot: %s
@@ -104,7 +104,7 @@ generate_code_prompt <- "I want to create this plot: %s
       Only ever return a single function called `plot_df`
       Make sure the `plot_df` function returns a `ggplot` object
       DO NOT include comments
-      Include library requirements with require() statements
+      Include library requirements with require() statements e.g. require(tidyr) for drop_na()
       All plots must have a concise title and axes must be labelled
       Respond with only the string of code, without any surrounding formatting like single or double inverted commas or backticks
       Features must be placed on the axes specified in the plot description (e.g. type on x-axis and count on y-axis)

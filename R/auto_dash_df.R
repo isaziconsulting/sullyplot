@@ -18,7 +18,7 @@
 #' @return The list of `ggplot` objects representing the dashboard.
 #'
 #' @export
-auto_dash <- function(file_df, num_plots = 4, custom_description="", dash_model="gpt-4", code_model="gpt-4", num_design_attempts=2, num_code_attempts=5, max_cols=10, save_messages=FALSE, save_dir="", save_name="auto_dash") {
+auto_dash_df <- function(file_df, num_plots = 4, custom_description="", dash_model="gpt-4", code_model="gpt-4", num_design_attempts=2, num_code_attempts=5, max_cols=10, save_messages=FALSE, save_dir="", save_name="auto_dash") {
   summary <- summarise_df(file_df, remove_cols = TRUE, max_cols = max_cols)
   file_df <- summary$clean_df
   summary_df <- summary$df_stats

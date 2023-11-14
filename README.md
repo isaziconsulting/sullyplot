@@ -8,6 +8,8 @@ You should first set the `OPENAI_API_KEY` environment variable on whichever envi
 
 Then simply use the functions from `sullyplot` with `sullyplot::function_name()` to use AI models.
 
+Can be installed using `devtools::install_gitlab("isazi/hudson-packages/sullyplot@main")`.
+
 ## Functions
 
 ### Automatically plot a full dashboard

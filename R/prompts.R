@@ -87,7 +87,6 @@ Your previous response was:
 generate_code_prompt <- "I want to create this plot: %s
     Please provide a function in R called 'plot_df' that takes a dataframe 'df' as its argument, processes it, and then directly returns a `ggplot` object.
     The function should handle the necessary data transformation, statistical analyses, and plotting within it.
-    Make sure to handle NA values.
 
     *** STYLING RULES ***
       Box plots should always be coloured by category.
@@ -104,7 +103,7 @@ generate_code_prompt <- "I want to create this plot: %s
       Only ever return a single function called `plot_df`
       Make sure the `plot_df` function returns a `ggplot` object
       DO NOT include comments
-      Include library requirements with require() statements e.g. require(tidyr) for drop_na()
+      Include library requirements with require() statements
       All plots must have a concise title and axes must be labelled
       Respond with only the string of code, without any surrounding formatting like single or double inverted commas or backticks
       Features must be placed on the axes specified in the plot description (e.g. type on x-axis and count on y-axis)

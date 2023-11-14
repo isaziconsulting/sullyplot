@@ -29,7 +29,8 @@ Imports:
     plotly,
     gridExtra,
     htmltools,
-    htmlwidgets
+    htmlwidgets,
+    infotheo
 Suggests:
     testthat (>= 3.0.0),
     broom,
@@ -37,7 +38,6 @@ Suggests:
     tidyr,
     purrr,
     ggfortify,
-    infotheo,
     forcats, 
     modelr,
     reshape2,

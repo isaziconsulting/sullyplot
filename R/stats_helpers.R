@@ -1,4 +1,4 @@
-summarise_df <- function(df, remove_cols=TRUE, max_cols=15){
+summarise_df <- function(df, remove_cols=TRUE, max_cols=10) {
   df_stats <- data.frame(name = names(df))
   df_and_fmt <- himunge::autoconvert_dataframe(df)
   df_prime <- df_and_fmt$df
@@ -69,8 +69,8 @@ summarise_df <- function(df, remove_cols=TRUE, max_cols=15){
       pk_cols <- himunge::find_primary_keys(df_prime, max_depth=1, timeout=30)
       # We are only looking for single-column primary keys, so if the returned primary key is longer
       # this means there was an error and all columns were returned
-      if(length(pk_cols[[1]]) > 1) {
-        log("Too many primary key candidates found for filtering")
+      if(length(pk_cols) == 0 || length(pk_cols[[1]]) > 1) {
+        log("Primary key not found")
         df_stats_filtered <- df_stats
       } else {
         log(sprintf("Filtering out the primary key columns: %s", paste(pk_cols, collapse = ", ")))

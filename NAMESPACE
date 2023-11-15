@@ -2,7 +2,6 @@
 
 export("%>%")
 export(auto_dash)
-export(auto_dash_df)
 export(auto_plot)
 export(render_dash_html)
 export(render_dash_pdf)

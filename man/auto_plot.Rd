@@ -5,7 +5,7 @@
 \title{Generate code and a `ggplot` object according to the described plot.}
 \usage{
 auto_plot(
-  file_df,
+  data,
   plot_columns,
   plot_description,
   num_code_attempts = 5,
@@ -16,7 +16,7 @@ auto_plot(
 )
 }
 \arguments{
-\item{file_df}{A dataframe which you want plotted.}
+\item{data}{The input data to plot, can be either the path to a file (must be .csv or .xlsx) or a data frame.}
 
 \item{plot_columns}{The list of names of columns in your dataframe which are relevant to the plot.}
 

@@ -13,7 +13,6 @@ The \code{sullyplot} R Package provides a framework for automated plotting of gr
 \subsection{Automatically plot a full dashboard}{
 \enumerate{
 \item \code{auto_dash} - Generates a dashboard from the input file and returns the list of \code{ggplot} objects.
-\item \code{auto_dash_df} - Generates a dashboard from an input data frame and returns the list of \code{ggplot} objects.
 \item \code{render_dash_html} - Renders a list of \code{ggplot} objects as an interactive dashboard in html.
 \item \code{render_dash_pdf} - Renders a list of \code{ggplot} objects as a pdf file.
 }

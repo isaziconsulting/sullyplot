@@ -5,11 +5,12 @@
 \title{Generate a dashboard of `ggplot` objects}
 \usage{
 auto_dash(
-  file_path,
+  data,
   num_plots = 6,
   custom_description = "",
   dash_model = "gpt-4",
   code_model = "gpt-4",
+  temperature = 0.1,
   num_design_attempts = 1,
   num_code_attempts = 5,
   max_cols = 10,
@@ -19,7 +20,7 @@ auto_dash(
 )
 }
 \arguments{
-\item{file_path}{The path to your input file. Must be .csv or .xlsx.}
+\item{data}{The input data to create a dashboard from, can be either the path to a file (must be .csv or .xlsx) or a data frame.}
 
 \item{num_plots}{The number of plots in your dashboard. Default is 6.}
 
@@ -28,6 +29,8 @@ auto_dash(
 \item{dash_model}{The name of the language model to use for designing the dashboard. Default 'gpt-4'.}
 
 \item{code_model}{The name of the language model to use for coding individual plots. Default 'gpt-4'.}
+
+\item{temperature}{The temperature value for the language model designing the dashboard (does not affect code generation). Default is 0.1.}
 
 \item{num_design_attempts}{The number of iterations to improve on the dashboard design. Default is 1.}
 

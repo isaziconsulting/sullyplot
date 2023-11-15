@@ -1,3 +1,14 @@
+read_data <- function(data) {
+  # Try read as a file path if data is a string otherwise if it's a df use it directly
+  if (is.character(data) && length(data) == 1) {
+    return(read_file(data))
+  } else if (is.data.frame(data)) {
+    return(data)
+  } else {
+    stop(sprintf("Format %s is not supported", class(data)[1]))
+  }
+}
+
 get_file_fmt <- function(filename) {
   extension <- tools::file_ext(filename)
   if (extension == "") {

@@ -2,7 +2,7 @@
 #'
 #' This function automatically generates code and a `ggplot` object according to the described plot.
 #'
-#' @param file_df A dataframe which you want plotted.
+#' @param data The input data to plot, can be either the path to a file (must be .csv or .xlsx) or a data frame.
 #' @param plot_columns The list of names of columns in your dataframe which are relevant to the plot.
 #' @param plot_description The description of the plot you want.
 #' @param num_code_attempts The maximum number of attempts to code your plot before failing - can take less if no errors are encountered in code generation. Default is 5.
@@ -21,10 +21,11 @@
 #' print(my_plot)
 #' }
 #' @export
-auto_plot <- function(file_df, plot_columns, plot_description, num_code_attempts=5, code_model="gpt-4", save_messages=FALSE, save_dir="", save_name="auto_plot") {
+auto_plot <- function(data, plot_columns, plot_description, num_code_attempts=5, code_model="gpt-4", save_messages=FALSE, save_dir="", save_name="auto_plot") {
+  input_df <- read_data(data)
   # Filter only the input columns that were chosen for this plot
-  filtered_file_df <- filter_df(file_df, plot_columns)
-  filtered_summary <- summarise_df(filtered_file_df, remove_cols=FALSE)
+  filtered_input_df <- filter_df(input_df, plot_columns)
+  filtered_summary <- summarise_df(filtered_input_df, remove_cols=FALSE)
   filtered_summary_df <- filtered_summary$df_stats
   
   code_gen_prompt <- sprintf(generate_code_prompt, plot_description, to_csv(filtered_summary_df))
@@ -43,7 +44,7 @@ auto_plot <- function(file_df, plot_columns, plot_description, num_code_attempts
     if(save_messages) {
       save_chat_messages(all_chat_messages, sprintf("%s/%s_all.json", save_dir, save_name))
     }
-    attempt_results <- make_plot_attempt(code_string, file_df)
+    attempt_results <- make_plot_attempt(code_string, input_df)
     if (attempt_results$success) {
       log(sprintf("Final code: \n%s\n", code_string))
       if(save_messages) {

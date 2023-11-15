@@ -3,7 +3,7 @@
 #' This function automatically generates a dashboard of `ggplot` objects from your input file.
 #' It allows you to specify the number of plots and a custom description of your dashboard.
 #'
-#' @param file_path The path to your input file. Must be .csv or .xlsx.
+#' @param data The input data to create a dashboard from, can be either the path to a file (must be .csv or .xlsx) or a data frame.
 #' @param num_plots The number of plots in your dashboard. Default is 6.
 #' @param custom_description An optional description to describe the custom dashboard you want.
 #' @param dash_model The name of the language model to use for designing the dashboard. Default 'gpt-4'.
@@ -28,15 +28,15 @@
 #' 
 #' @importFrom rlang .data
 #' @export
-auto_dash <- function(file_path, num_plots = 6, custom_description="", dash_model="gpt-4", code_model="gpt-4", temperature=0.1, num_design_attempts=1, num_code_attempts=5, max_cols=10, save_messages=FALSE, save_dir="", save_name="auto_dash") {
-  file_df <- read_file(file_path)
-  summary <- summarise_df(file_df, remove_cols = TRUE, max_cols = max_cols)
-  file_df <- summary$clean_df
+auto_dash <- function(data, num_plots = 6, custom_description="", dash_model="gpt-4", code_model="gpt-4", temperature=0.1, num_design_attempts=1, num_code_attempts=5, max_cols=10, save_messages=FALSE, save_dir="", save_name="auto_dash") {
+  input_df <- read_data(data)
+  summary <- summarise_df(input_df, remove_cols = TRUE, max_cols = max_cols)
+  input_df <- summary$clean_df
   summary_df <- summary$df_stats
   
   # Get GPT to design and describe the overall dashboard, use the custom description if available
   if(custom_description == "") {
-    user_prompt <- sprintf(describe_dashboard_prompt, num_plots, to_csv(summary_df), mi_matrix(file_df), significant_categorical_relationships(file_df, summary_df), significant_categorical_numeric_relationships(file_df, summary_df))
+    user_prompt <- sprintf(describe_dashboard_prompt, num_plots, to_csv(summary_df), mi_matrix(input_df), significant_categorical_relationships(input_df, summary_df), significant_categorical_numeric_relationships(input_df, summary_df))
   } else {
     user_prompt <- sprintf(describe_custom_dashboard_prompt, num_plots, custom_description, to_csv(summary_df))
   }
@@ -69,7 +69,7 @@ auto_dash <- function(file_path, num_plots = 6, custom_description="", dash_mode
   all_plots <- lapply(seq_along(plot_info$input_columns), function(idx) {
     log(sprintf("\nGenerating plot %d using the columns: %s", idx, paste(plot_info$input_columns[[idx]], collapse = ", ")))
     tryCatch({
-      auto_plot_results <- auto_plot(file_df, plot_info$input_columns[[idx]], plot_info$descriptions[[idx]], num_code_attempts, code_model, save_messages, save_dir, sprintf("%s_plot_%d", save_name, idx))
+      auto_plot_results <- auto_plot(input_df, plot_info$input_columns[[idx]], plot_info$descriptions[[idx]], num_code_attempts, code_model, save_messages, save_dir, sprintf("%s_plot_%d", save_name, idx))
       return(auto_plot_results$plot_obj)
     }, error = function(e) {
       log(sprintf("Failed to generate plot %d: ", idx, e$message))

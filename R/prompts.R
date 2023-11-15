@@ -8,7 +8,9 @@ describe_dashboard_prompt <- "Design a data analysis dashboard consisting of %d 
 
 Explore the dataset with a variety of data analysis plots. Choose plots that give a broad and diverse view of the dataset, highlighting different aspects and relationships.
 
-Ensure the plots each show different relationships in the data.
+Ensure the plots each show different relationships by varying them as much as possible using different plot types and different columns, e.g. do not just use scatter plots or repeatedly show the same column on an axis.
+
+As a guideline, include no more than 2 of the same plot type.
 
 *** DASHBOARD RULES ***
   Make sure all plots can be plotted as `ggplot` objects.
@@ -47,7 +49,7 @@ describe_custom_dashboard_prompt <- "Design this dashboard consisting of %d plot
   Make sure all plots can be plotted as `ggplot` objects.
   Quantitatives must be numerics/integers and have n_distinct > 20 in the summary.
   Categoricals must have the type 'Categorical' in the summary.
-  Any variables referenced in plot descriptions must also be in the provided summary and list of input columns - never reference a varaible that does not refer to a specific column.
+  Any variables referenced in plot descriptions must also be in the provided summary and list of input columns - never reference a variable that does not refer to a specific column.
   Here are the available plot types & rules:
     scatter plots - must have quantitatives on the x and y axes, and an optional 3rd categorical or quantitative column for colour (if you use a quantitative for colour, specify to use a continuous colour scale). Never place a categorical on the x or y axis.
     line plot - must have a DateTime column on the x-axis, a quantitative on the y axis, and an optional 3rd categorical column for colour.
@@ -67,10 +69,6 @@ Here is a summary of the columns in my input dataframe:
 
 improve_dashboard_prompt <- "Can you improve on previous response by replacing plot descriptions and their input columns according to the following:
 
-Never reduce the amount information in plots e.g. never separate one plot into two
-
-Ensure the plots each show different relationships in the data.
-
 Most importantly, replace any plots that do not follow the previosuly stated DASHBOARD RULES.
 
 Then, where appropriate and not present already, add or improve existing visual enhancements such as:
@@ -78,7 +76,9 @@ Then, where appropriate and not present already, add or improve existing visual 
 - Add 95%% prediction elipses per category for any scatter plots that have a categorical column
 - Add lines of best fit with 5%% confidence intervals to line plots, and scatter plots that do not have a categorical column
 - Group related plots together - e.g. If there are two box/bar plots with the same categories use multiple separate y-axes to plot them as a single `ggplot`. Or if there are two scatter plots with the same x-axis, group them into one `ggplot` with separate y-axes.
-- Replace any redundant plots with different plots
+- Replace any redundant or highly similar plots with different plots
+
+Note that you should never use the same column as both the x-axis and the category for separating y-axes.
 
 Finally, make sure there are at least %d plots in total and add new plots if there aren't.
 
@@ -90,7 +90,8 @@ Your previous response was:
 
 generate_code_prompt <- "I want to create this plot: %s
     Please provide a function in R called 'plot_df' that takes a dataframe 'df' as its argument, processes it, and then directly returns a `ggplot` object.
-    The function should handle the necessary data transformation, statistical analyses, and plotting within it. If the plot includes separate y-axes, use `face_wrap` to show them.
+    The function should handle the necessary data transformation, statistical analyses, and plotting within it.
+    Only if the plot specifically states to use separate y-axes, use `facet_wrap` to show them.
 
     *** STYLING RULES ***
       Box plots should always be coloured by category.

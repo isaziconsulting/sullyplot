@@ -53,6 +53,18 @@ to_csv <- function(df) {
 }
 
 save_chat_messages <- function(df, file_path) {
+  # Extract the directory path from the file_path
+  directory <- dirname(file_path)
+  
+  # Check if the directory is just the current directory
+  if (directory == "") {
+    directory <- "."
+  }
+  
+  # Check if the directory exists, if not, create it
+  if (!dir.exists(directory)) {
+    dir.create(directory, recursive = TRUE)
+  }
   json_data <- jsonlite::toJSON(list(messages = df), auto_unbox = TRUE, pretty = TRUE)
   write(json_data, file = file_path)
 }

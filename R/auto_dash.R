@@ -9,7 +9,7 @@
 #' @param dash_model The name of the language model to use for designing the dashboard. Default 'gpt-4'.
 #' @param code_model The name of the language model to use for coding individual plots. Default 'gpt-4'.
 #' @param temperature The temperature value for the language model designing the dashboard (does not affect code generation). Default is 0.1.
-#' @param num_design_attempts The number of iterations to improve on the dashboard design. Default is 1.
+#' @param num_design_attempts The number of iterations to improve on the dashboard design. Default is 2.
 #' @param num_code_attempts The maximum number of attempts to code your plot before failing - can take less if no errors are encountered in code generation. Default is 5.
 #' @param max_cols The maximum number of columns the LLM can 'see'. If more columns are provided in the file they will be sorted and the columns with the least NA and most information will be selected. Default is 10.
 #' @param save_messages Whether to save chat messages and responses for each dashboard generation step, useful for finetuning. Default is false.
@@ -28,7 +28,7 @@
 #' 
 #' @importFrom rlang .data
 #' @export
-auto_dash <- function(data, num_plots = 6, custom_description="", dash_model="gpt-4", code_model="gpt-4", temperature=0.1, num_design_attempts=1, num_code_attempts=5, max_cols=10, save_messages=FALSE, save_dir="", save_name="auto_dash") {
+auto_dash <- function(data, num_plots = 6, custom_description="", dash_model="gpt-4", code_model="gpt-4", temperature=0.1, num_design_attempts=2, num_code_attempts=5, max_cols=10, save_messages=TRUE, save_dir="sullyplot_messages", save_name="auto_dash") {
   input_df <- read_data(data)
   summary <- summarise_df(input_df, remove_cols = TRUE, max_cols = max_cols)
   input_df <- summary$clean_df
@@ -44,7 +44,7 @@ auto_dash <- function(data, num_plots = 6, custom_description="", dash_model="gp
   log(user_prompt)
   chat_messages <- data.frame(role = "user", content = user_prompt)
   all_chat_messages <- chat_messages
-  response_json <- continue_chat(chat_messages, system_message = system_prompt, model_name = dash_model, max_tokens = 768, options = list(temperature = temperature))
+  response_json <- continue_chat(chat_messages, system_message = system_prompt, model_name = dash_model, max_tokens = 1024, options = list(temperature = temperature))
   all_chat_messages <- data.frame(role = c("user", "assistant"), content = c(user_prompt, response_json))
   
   log("Initial dashboard design")
@@ -54,7 +54,7 @@ auto_dash <- function(data, num_plots = 6, custom_description="", dash_model="gp
       log(sprintf("Improved dashboard design v%d", attempt_idx))
       improve_dashboard_message <- sprintf(improve_dashboard_prompt, num_plots, response_json)
       chat_messages_new <- rbind(chat_messages, data.frame(role = "user", content = improve_dashboard_message))
-      response_json <- continue_chat(chat_messages_new, system_message = system_prompt, model_name = dash_model, max_tokens = 768, options = list(temperature = temperature))
+      response_json <- continue_chat(chat_messages_new, system_message = system_prompt, model_name = dash_model, max_tokens = 1024, options = list(temperature = temperature))
       all_chat_messages <- rbind(all_chat_messages, data.frame(role = c("user", "assistant"), content = c(improve_dashboard_message, response_json)))
       log(response_json)
     }

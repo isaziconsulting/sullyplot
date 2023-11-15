@@ -2,6 +2,18 @@ system_prompt <- "You are a data science assistant running an automated data sci
   Your job is to analyse data and produce R code that generates plots to capture the most relevant relationships or trends in the data.
   You must pay specific attention to prompts that tell you how to format your answers.
   Never include any of your own additional formatting or explanations in your answers.
+  
+  *** DASHBOARD RULES ***
+  Make sure all plots can be plotted as `ggplot` objects.
+  Quantitatives must be numerics/integers and have n_distinct > 20 in the summary.
+  Categoricals must have the type 'Categorical' in the summary.
+  Any variables referenced in plot descriptions must also be in the provided summary and list of input columns - never reference a varaible that does not refer to a specific column.
+  Here are the available plot types & rules:
+    scatter plots - must have only quantitatives on the x and y axes, and an optional 3rd categorical or quantitative column for colour (if you use a quantitative for colour, specify to use a continuous colour scale).
+    line plot - must have a DateTime column on the x-axis, a quantitative on the y axis, and an optional 3rd categorical column for colour.
+    box plots - must have a categorical on the x-axis, a quantitative on the y axis, and an optional 3rd categorical or quantitative column for separate y-axes or grouped box plots.
+    histogram - must have a quantitative on the x-axis in bins, counts on the y axis, and an optional 2nd categorical column for stacked bars, multiple axes, or colour.
+    bar chart - must have a categorical on the x-axis and counts on the y axis, and an optional 3rd categorical column for stacked bars or multiple axes.
 "
 
 describe_dashboard_prompt <- "Design a data analysis dashboard consisting of %d plots using the data I give you. 
@@ -18,9 +30,9 @@ As a guideline, include no more than 2 of the same plot type.
   Categoricals must have the type 'Categorical' in the summary.
   Any variables referenced in plot descriptions must also be in the provided summary and list of input columns - never reference a varaible that does not refer to a specific column.
   Here are the available plot types & rules:
-    scatter plots - must have quantitatives on the x and y axes, and an optional 3rd categorical or quantitative column for colour. Never place a categorical on the x or y axis.
+    scatter plots - must have only quantitatives on the x and y axes, and an optional 3rd categorical or quantitative column for colour (if you use a quantitative for colour, specify to use a continuous colour scale).
     line plot - must have a DateTime column on the x-axis, a quantitative on the y axis, and an optional 3rd categorical column for colour.
-    box plots - must have a categorical on the x axis and a quantitative on the y axis. Can have multiple quantitative y-axes if related, but you must explicitly state how they should be used together (e.g. separate y-axes or an additional category for which quantitative it is).
+    box plots - must have a categorical on the x-axis, a quantitative on the y axis, and an optional 3rd categorical or quantitative column for separate y-axes or grouped box plots.
     histogram - must have a quantitative on the x-axis in bins, counts on the y axis, and an optional 2nd categorical column for stacked bars, multiple axes, or colour.
     bar chart - must have a categorical on the x-axis and counts on the y axis, and an optional 3rd categorical column for stacked bars or multiple axes.
 
@@ -51,9 +63,9 @@ describe_custom_dashboard_prompt <- "Design this dashboard consisting of %d plot
   Categoricals must have the type 'Categorical' in the summary.
   Any variables referenced in plot descriptions must also be in the provided summary and list of input columns - never reference a variable that does not refer to a specific column.
   Here are the available plot types & rules:
-    scatter plots - must have quantitatives on the x and y axes, and an optional 3rd categorical or quantitative column for colour (if you use a quantitative for colour, specify to use a continuous colour scale). Never place a categorical on the x or y axis.
+    scatter plots - must have only quantitatives on the x and y axes, and an optional 3rd categorical or quantitative column for colour (if you use a quantitative for colour, specify to use a continuous colour scale).
     line plot - must have a DateTime column on the x-axis, a quantitative on the y axis, and an optional 3rd categorical column for colour.
-    box plots - must have a categorical on the x axis and a quantitative on the y axis. Can have multiple quantitative y-axes if related, but you must explicitly state how they should be used together (e.g. separate y-axes or an additional category for which quantitative it is).
+    box plots - must have a categorical on the x-axis, a quantitative on the y axis, and an optional 3rd categorical or quantitative column for separate y-axes or grouped box plots.
     histogram - must have a quantitative on the x-axis in bins, counts on the y axis, and an optional 2nd categorical column for stacked bars, multiple axes, or colour.
     bar chart - must have a categorical on the x-axis and counts on the y axis, and an optional 3rd categorical column for stacked bars or multiple axes.
 
@@ -69,18 +81,15 @@ Here is a summary of the columns in my input dataframe:
 
 improve_dashboard_prompt <- "Can you improve on previous response by replacing plot descriptions and their input columns according to the following:
 
-Most importantly, replace any plots that do not follow the previosuly stated DASHBOARD RULES.
+Most importantly, replace any plots that do not follow the previously stated DASHBOARD RULES.
 
-Then, where appropriate and not present already, add or improve existing visual enhancements such as:
+Then, where appropriate and not present already, add or improve existing visual enhancements, including:
 - Add categorical columns if available in the summary to show relationships accross different categories where relevant
+- Group related plots together into one plot - e.g. If there are two box/bar plots with the same categories use multiple separate y-axes to plot them as a single `ggplot`. Or if there are two scatter plots with the same x-axis, group them into one `ggplot` with separate y-axes.
 - Add 95%% prediction elipses per category for any scatter plots that have a categorical column
 - Add lines of best fit with 5%% confidence intervals to line plots, and scatter plots that do not have a categorical column
-- Group related plots together - e.g. If there are two box/bar plots with the same categories use multiple separate y-axes to plot them as a single `ggplot`. Or if there are two scatter plots with the same x-axis, group them into one `ggplot` with separate y-axes.
-- Replace any redundant or highly similar plots with different plots
 
-Note that you should never use the same column as both the x-axis and the category for separating y-axes.
-
-Finally, make sure there are at least %d plots in total and add new plots if there aren't.
+Finally, replace any redundant or highly similar plots with different plots then make sure there are %d plots in total and add new plots if there aren't.
 
 Your previous response was:
 %s

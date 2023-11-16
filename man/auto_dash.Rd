@@ -11,11 +11,11 @@ auto_dash(
   dash_model = "gpt-4",
   code_model = "gpt-4",
   temperature = 0.1,
-  num_design_attempts = 1,
+  num_design_attempts = 2,
   num_code_attempts = 5,
   max_cols = 10,
-  save_messages = FALSE,
-  save_dir = "",
+  save_messages = TRUE,
+  save_dir = "sullyplot_messages",
   save_name = "auto_dash"
 )
 }
@@ -32,7 +32,7 @@ auto_dash(
 
 \item{temperature}{The temperature value for the language model designing the dashboard (does not affect code generation). Default is 0.1.}
 
-\item{num_design_attempts}{The number of iterations to improve on the dashboard design. Default is 1.}
+\item{num_design_attempts}{The number of iterations to improve on the dashboard design. Default is 2.}
 
 \item{num_code_attempts}{The maximum number of attempts to code your plot before failing - can take less if no errors are encountered in code generation. Default is 5.}
 

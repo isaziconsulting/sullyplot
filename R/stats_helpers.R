@@ -70,15 +70,14 @@ summarise_df <- function(df, remove_cols=TRUE, max_cols=10) {
       # We are only looking for single-column primary keys, so if the returned primary key is longer
       # this means there was an error and all columns were returned
       if(length(pk_cols) == 0 || length(pk_cols[[1]]) > 1) {
-        log("Primary key not found")
-        df_stats_filtered <- df_stats
+        stop("Primary key not found")
       } else {
         log(sprintf("Filtering out the primary key columns: %s", paste(pk_cols, collapse = ", ")))
-        df_stats_filtered <- df_stats[!df_stats$name %in% unlist(pk_cols), ]
+        df_stats_filtered <<- df_stats[!df_stats$name %in% unlist(pk_cols), ]
       }
     }, error = function(e) {
-      log(e$message)
-      df_stats_filtered <- df_stats
+      log(sprintf("Error finding primary keys: %s", e$message))
+      df_stats_filtered <<- df_stats
     })
     df_stats <- df_stats_filtered
   }

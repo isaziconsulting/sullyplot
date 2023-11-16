@@ -33,7 +33,6 @@ auto_dash <- function(data, num_plots = 6, custom_description="", dash_model="gp
   summary <- summarise_df(input_df, remove_cols = TRUE, max_cols = max_cols)
   input_df <- summary$clean_df
   summary_df <- summary$df_stats
-  
   # Get GPT to design and describe the overall dashboard, use the custom description if available
   if(custom_description == "") {
     user_prompt <- sprintf(describe_dashboard_prompt, num_plots, to_csv(summary_df), mi_matrix(input_df), significant_categorical_relationships(input_df, summary_df), significant_categorical_numeric_relationships(input_df, summary_df))

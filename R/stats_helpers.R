@@ -1,4 +1,4 @@
-summarise_df <- function(df, remove_cols=TRUE, max_cols=10) {
+summarise_df <- function(df, remove_cols=TRUE, max_cols=10, filter_pk_cols=FALSE) {
   df_stats <- data.frame(name = names(df))
   df_and_fmt <- himunge::autoconvert_dataframe(df)
   df_prime <- df_and_fmt$df
@@ -32,10 +32,10 @@ summarise_df <- function(df, remove_cols=TRUE, max_cols=10) {
   df_stats$num_na <- sapply(df_prime, function(x)sum(is.na(x)))
   df_stats$n_distinct <- sapply(df_prime, dplyr::n_distinct)
   # df_stats$is_identifier <- (df_stats$n_distinct == df_stats$count) && df_stats$type
-  # df_stats$levels <- sapply(df_prime, function(x){
-  #                                       if(dplyr::n_distinct(x) <= cat_cutoff)return(paste(as.character(unique(x)), collapse=", "))
-  #                                       return("")
-  #                                     })
+  df_stats$levels <- sapply(df_prime, function(x){
+                                        if(dplyr::n_distinct(x) <= cat_cutoff)return(paste(as.character(unique(x)), collapse=", "))
+                                        return("")
+                                      })
   df_stats$quantile_stats <- lapply(names(df_prime), 
                       function(x){
                         sx <- sort(df_prime[[x]])
@@ -65,21 +65,23 @@ summarise_df <- function(df, remove_cols=TRUE, max_cols=10) {
     df_stats <- df_stats[!df_stats$type %in% c("Free Text"), ]
     # Filter out columns with no information (no entropy)
     df_stats <- df_stats[df_stats$information > 0, ]
-    tryCatch({
-      pk_cols <- himunge::find_primary_keys(df_prime, max_depth=1, timeout=30)
-      # We are only looking for single-column primary keys, so if the returned primary key is longer
-      # this means there was an error and all columns were returned
-      if(length(pk_cols) == 0 || length(pk_cols[[1]]) > 1) {
-        stop("Primary key not found")
-      } else {
-        log(sprintf("Filtering out the primary key columns: %s", paste(pk_cols, collapse = ", ")))
-        df_stats_filtered <<- df_stats[!df_stats$name %in% unlist(pk_cols), ]
-      }
-    }, error = function(e) {
-      log(sprintf("Error finding primary keys: %s", e$message))
-      df_stats_filtered <<- df_stats
-    })
-    df_stats <- df_stats_filtered
+    if (filter_pk_cols) {
+      tryCatch({
+        pk_cols <- himunge::find_primary_keys(df_prime, max_depth=1, timeout=30)
+        # We are only looking for single-column primary keys, so if the returned primary key is longer
+        # this means there was an error and all columns were returned
+        if(length(pk_cols) == 0 || length(pk_cols[[1]]) > 1) {
+          stop("Primary key not found")
+        } else {
+          log(sprintf("Filtering out the primary key columns: %s", paste(pk_cols, collapse = ", ")))
+          df_stats_filtered <<- df_stats[!df_stats$name %in% unlist(pk_cols), ]
+        }
+      }, error = function(e) {
+        log(sprintf("Error finding primary keys: %s", e$message))
+        df_stats_filtered <<- df_stats
+      })
+      df_stats <- df_stats_filtered
+    }
   }
   
   if (nrow(df_stats) > max_cols) {

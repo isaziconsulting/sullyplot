@@ -9,8 +9,9 @@ make_plot_attempt <- function(code_string, file_df) {
       }
       stop("The returned object is of class '", class(p)[1], "', not 'ggplot'.")
     }
-    # Display the plot
-    print(p)
+    # Try to render the plot object
+    test_rendering(p)
+    # Assess if plot is low quality
     low_quality <- is_low_quality_plot(p)
     if(low_quality$status) {
       log(sprintf("Plot was low quality: %s \n", low_quality$message))
@@ -25,5 +26,24 @@ make_plot_attempt <- function(code_string, file_df) {
     log(sprintf("Plot failed with the error: %s \n", e$message))
     user_prompt <- sprintf(fix_error_prompt, code_string, e$message)
     return(list(success = FALSE, plot_obj = NULL, new_prompt = user_prompt))
+  })
+}
+
+# Tries to render a ggplot object
+test_rendering <- function(plot_obj) {
+  # Create a temporary pdf file for testing if we can render the plot
+  test_file <- tempfile(fileext = "pdf")
+  tryCatch({
+    # First try render normally
+    print(plot_obj)
+  }, error = function(e) {
+    # If that fails, try rendering with a file-based graphics device since it could be failing
+    # due to the main graphics device being inaccessible (e.g. if this is run from a forked child process)
+    pdf(test_file)
+    print(plot_obj)
+    dev.off()
+  }, finally = {
+    # Clean up temp file
+    unlink(test_file)
   })
 }

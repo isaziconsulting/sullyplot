@@ -30,7 +30,8 @@ Imports:
     gridExtra,
     htmltools,
     htmlwidgets,
-    infotheo
+    infotheo,
+    logger
 Suggests:
     testthat (>= 3.0.0),
     broom,

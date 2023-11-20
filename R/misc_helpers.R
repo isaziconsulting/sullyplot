@@ -71,8 +71,8 @@ save_chat_messages <- function(df, file_path) {
 
 log <- function(message) {
   if (is.list(message) || is.data.frame(message)) {
-    cat(paste(capture.output(print(message)), collapse = "\n"))
+    logger::log_info(paste(capture.output(print(message)), collapse = "\n"))
   } else {
-    cat(sprintf("%s\n", message))
+    logger::log_info(sprintf("%s\n", message))
   }
 }

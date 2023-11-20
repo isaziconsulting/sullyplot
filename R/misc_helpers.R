@@ -73,6 +73,6 @@ log <- function(message) {
   if (is.list(message) || is.data.frame(message)) {
     logger::log_info(paste(capture.output(print(message)), collapse = "\n"))
   } else {
-    logger::log_info(sprintf("%s\n", message))
+    logger::log_info(logger::skip_formatter(message))
   }
 }

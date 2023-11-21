@@ -10,17 +10,24 @@ The \code{sullyplot} R Package provides a framework for automated plotting of gr
 \section{sullyplot functions}{
 
 \subsection{Functions}{
-\subsection{Automatically plot a full dashboard}{
+\subsection{Automatically design and plot a full dashboard}{
 \enumerate{
 \item \code{auto_dash} - Generates a dashboard from the input file and returns the list of \code{ggplot} objects.
-\item \code{render_dash_html} - Renders a list of \code{ggplot} objects as an interactive dashboard in html.
-\item \code{render_dash_pdf} - Renders a list of \code{ggplot} objects as a pdf file.
+\item \code{auto_dash_design} - Generates a dataframe describing the design of a dashboard for the given file.
 }
 }
 
 \subsection{Automatically plot individual graphs}{
 \enumerate{
 \item \code{auto_plot} - Generates a \code{ggplot} object from an input file, list of necessary columns, and plot description.
+}
+}
+
+\subsection{Render generated plots and dashboards}{
+\enumerate{
+\item \code{render_dash_html} - Renders a list of \code{ggplot} objects as an interactive dashboard in html.
+\item \code{render_plot_html} - Renders a \code{ggplot} object as an interactive html page.
+\item \code{render_dash_pdf} - Renders a list of \code{ggplot} objects as a pdf file.
 }
 }
 

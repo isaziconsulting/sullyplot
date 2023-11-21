@@ -2,9 +2,11 @@
 
 export("%>%")
 export(auto_dash)
+export(auto_dash_design)
 export(auto_plot)
 export(render_dash_html)
 export(render_dash_pdf)
+export(render_plot_html)
 importFrom(gridExtra,grid.arrange)
 importFrom(magrittr,"%>%")
 importFrom(rlang,.data)

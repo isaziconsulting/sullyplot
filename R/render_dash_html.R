@@ -20,19 +20,15 @@
 render_dash_html <- function(all_plots, filename=NULL, display=FALSE) {
   # Convert each ggplot to a plotly object and then to an iframe
   iframes <- lapply(all_plots, function(plot) {
-    p_ly <- plotly::ggplotly(plot)
-    # Create a temporary file to save the HTML content
-    tmpfile <- tempfile(fileext = ".html")
-    htmlwidgets::saveWidget(p_ly, file = tmpfile, selfcontained = TRUE)
+    
+    html_content <- render_plot_html(plot)
     
     # Create the iframe tag with the content of the temporary HTML file
     iframe <- htmltools::tags$iframe(
-      srcdoc = paste(readLines(tmpfile), collapse = "\n"),
+      srcdoc = html_content,
       width = "49%", height = "400px", frameborder = "0"
     )
     
-    # Remove the temporary file
-    unlink(tmpfile)
     iframe
   })
   

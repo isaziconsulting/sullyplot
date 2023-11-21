@@ -12,12 +12,16 @@ Can be installed using `devtools::install_gitlab("isazi/hudson-packages/sullyplo
 
 ## Functions
 
-### Automatically plot a full dashboard
+### Automatically design and plot a full dashboard
 
 0. `auto_dash` - Generates a dashboard from the input file and returns the list of `ggplot` objects.
-1. `render_dash_html` - Renders a list of `ggplot` objects as an interactive dashboard in html.
-2. `render_dash_pdf` - Renders a list of `ggplot` objects as a pdf file.
+1. `auto_dash_design` - Generates a dataframe describing the design of a dashboard for the given file.
 
 ### Automatically plot individual graphs
 
-3. `auto_plot` - Generates and runs the code to create a `ggplot` object from an input file, list of necessary columns, and plot description.
+2. `auto_plot` - Generates a `ggplot` object from an input file, list of necessary columns, and plot description.
+
+### Render generated plots and dashboards
+3. `render_dash_html` - Renders a list of `ggplot` objects as an interactive dashboard in html.
+4. `render_plot_html` - Renders a `ggplot` object as an interactive html page.
+5. `render_dash_pdf` - Renders a list of `ggplot` objects as a pdf file.

@@ -33,37 +33,8 @@ auto_dash <- function(data, num_plots = 6, custom_description="", dash_model="gp
   input_df <- read_data(data)
   summary <- summarise_df(input_df, remove_cols = TRUE, max_cols = max_cols, filter_pk_cols=filter_pk_cols)
   input_df <- summary$clean_df
-  summary_df <- summary$df_stats
-  # Get GPT to design and describe the overall dashboard, use the custom description if available
-  if(custom_description == "") {
-    user_prompt <- sprintf(describe_dashboard_prompt, num_plots, to_csv(summary_df), mi_matrix(input_df), significant_categorical_relationships(input_df, summary_df), significant_categorical_numeric_relationships(input_df, summary_df))
-  } else {
-    user_prompt <- sprintf(describe_custom_dashboard_prompt, num_plots, custom_description, to_csv(summary_df))
-  }
-    # user_prompt <- sprintf(describe_dashboard_prompt, num_plots, to_csv(summary_df))
-  log(user_prompt)
-  chat_messages <- data.frame(role = "user", content = user_prompt)
-  all_chat_messages <- chat_messages
-  response_json <- continue_chat(chat_messages, system_message = system_prompt, model_name = dash_model, max_tokens = 1024, options = list(temperature = temperature))
-  all_chat_messages <- data.frame(role = c("user", "assistant"), content = c(user_prompt, response_json))
-  
-  log("Initial dashboard design")
-  log(response_json)
-  if (num_design_attempts > 0) {
-    for(attempt_idx in 1:num_design_attempts) {
-      log(sprintf("Improved dashboard design v%d", attempt_idx))
-      improve_dashboard_message <- sprintf(improve_dashboard_prompt, num_plots, response_json)
-      chat_messages_new <- rbind(chat_messages, data.frame(role = "user", content = improve_dashboard_message))
-      response_json <- continue_chat(chat_messages_new, system_message = system_prompt, model_name = dash_model, max_tokens = 1024, options = list(temperature = temperature))
-      all_chat_messages <- rbind(all_chat_messages, data.frame(role = c("user", "assistant"), content = c(improve_dashboard_message, response_json)))
-      log(response_json)
-    }
-  }
-  plot_info <- jsonlite::fromJSON(response_json, simplifyDataFrame = FALSE, simplifyMatrix = FALSE)
-  if(save_messages) {
-    save_chat_messages(data.frame(role = c("system", "user", "assistant"), content = c(system_prompt, user_prompt, response_json)), sprintf("%s/%s_dash.json", save_dir, save_name))
-    save_chat_messages(all_chat_messages, sprintf("%s/%s_dash_all.json", save_dir, save_name))
-  }
+  plot_info <- auto_dash_design(data=NULL, summary=summary, num_plots=num_plots, custom_description=custom_description, dash_model=dash_model, temperature=temperature, num_design_attempts=num_design_attempts,
+                                max_cols=max_cols, filter_pk_cols=filter_pk_cols, save_messages=save_messages, save_dir=save_dir, save_name=save_name)
   
   # Start coding the dashboard
   all_plots <- lapply(seq_along(plot_info$input_columns), function(idx) {

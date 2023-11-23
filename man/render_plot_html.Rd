@@ -11,7 +11,7 @@ render_plot_html(plot, filename = NULL, display = FALSE)
 
 \item{filename}{The filename to save the html file under (must be .html), no file is saved if null. Default is null.}
 
-\item{display}{If true and a filename is specified opens up the dashboard html file in a separate browser page. Default is false}
+\item{display}{If true and a filename is specified opens up the dashboard html file in a separate browser page. Default is false.}
 }
 \value{
 The html code for the interactive dashboard.

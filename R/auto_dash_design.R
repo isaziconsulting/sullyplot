@@ -63,7 +63,7 @@ auto_dash_design <- function(data, summary = NULL, num_plots = 6, custom_descrip
       }
       
       plot_info_json <- response$message
-      total_usage_tokens <- mapply('+', total_usage_tokens, reponse$usage_tokens)
+      total_usage_tokens <- mapply('+', total_usage_tokens, response$usage_tokens)
       all_chat_messages <- rbind(all_chat_messages, data.frame(role = c("user", "assistant"), content = c(improve_dashboard_message, plot_info_json)))
       log(sprintf("Improved dashboard design v%d", attempt_idx))
       log(plot_info_json)

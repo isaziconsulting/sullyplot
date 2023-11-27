@@ -1,4 +1,17 @@
-continue_chat <- function(chat_messages, system_message = NULL, model_name = "gpt-4", max_tokens = 150, options = list()) {
+#' Make a continue chat request with openai chat completion endpoint and track token usage.
+#'
+#' This function uses the openai api chat completions endpoint to continue a chat from a series of chat messages and optionally a system prompt, also returns usage statistics.
+#'
+#' @param chat_messages The input data frame of chat messages (see openai api docs for format).
+#' @param system_message Optional system prompt which will be added to chat messages.
+#' @param model_name The name of the model to use. Default 'gpt-4'.
+#' @param max_tokens The maximum number of tokens in the response. Default is 150.
+#' @param options Additional options such as temperature
+#'
+#' @return The response message as well as the amount of prompt and completion tokens used.
+#'
+#' @export
+sullyplot_continue_chat <- function(chat_messages, system_message = NULL, model_name = "gpt-4", max_tokens = 150, options = list()) {
   openai_api_key <- Sys.getenv("OPENAI_API_KEY")
   if (openai_api_key == "") {
     stop("You need to set the OPENAI_API_KEY environment variable!")

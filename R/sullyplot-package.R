@@ -20,6 +20,9 @@
 #' 4. `render_plot_html` - Renders a `ggplot` object as an interactive html page.
 #' 5. `render_dash_pdf` - Renders a list of `ggplot` objects as a pdf file.
 #'
+#' ### Openai Chat Requests
+#' 6. `sullyplot_continue_chat` - Makes a continue chat request with openai chat completion endpoint and tracks token usage.
+#'
 #' @md
 #' @docType package
 #' @name sullyplot

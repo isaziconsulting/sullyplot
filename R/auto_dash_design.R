@@ -33,11 +33,10 @@ auto_dash_design <- function(data, summary = NULL, num_plots = 6, custom_descrip
   } else {
     user_prompt <- sprintf(describe_custom_dashboard_prompt, num_plots, custom_description, to_csv(summary_df))
   }
-    # user_prompt <- sprintf(describe_dashboard_prompt, num_plots, to_csv(summary_df))
   log(user_prompt)
   chat_messages <- data.frame(role = "user", content = user_prompt)
   all_chat_messages <- chat_messages
-  response <- continue_chat(chat_messages, system_message = system_prompt, model_name = dash_model, max_tokens = 1024, options = list(temperature = temperature))
+  response <- sullyplot_continue_chat(chat_messages, system_message = system_prompt, model_name = dash_model, max_tokens = 1024, options = list(temperature = temperature))
   plot_info_json <- response$message
   total_usage_tokens <- response$usage_tokens
   
@@ -51,7 +50,7 @@ auto_dash_design <- function(data, summary = NULL, num_plots = 6, custom_descrip
       improve_dashboard_message <- sprintf(improve_dashboard_prompt, num_plots, plot_info_json)
       chat_messages_new <- rbind(chat_messages, data.frame(role = "user", content = improve_dashboard_message))
       
-      response <- continue_chat(chat_messages_new, system_message = system_prompt, model_name = dash_model, max_tokens = 1024, options = list(temperature = temperature))
+      response <- sullyplot_continue_chat(chat_messages_new, system_message = system_prompt, model_name = dash_model, max_tokens = 1024, options = list(temperature = temperature))
       plot_info_json <- response$message
       total_usage_tokens <- mapply('+', total_usage_tokens, reponse$usage_tokens)
       

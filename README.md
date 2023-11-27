@@ -25,3 +25,6 @@ Can be installed using `devtools::install_gitlab("isazi/hudson-packages/sullyplo
 3. `render_dash_html` - Renders a list of `ggplot` objects as an interactive dashboard in html.
 4. `render_plot_html` - Renders a `ggplot` object as an interactive html page.
 5. `render_dash_pdf` - Renders a list of `ggplot` objects as a pdf file.
+
+### Openai Chat Requests
+6. `sullyplot_continue_chat` - Makes a continue chat request with openai chat completion endpoint and tracks token usage.

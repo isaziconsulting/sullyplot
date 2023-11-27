@@ -36,7 +36,7 @@ auto_plot <- function(data, plot_columns, plot_description, num_code_attempts=5,
   # Make an initial attempt at coding the plot
   chat_messages <- data.frame(role = "user",  content = code_gen_prompt)
   all_chat_messages <- chat_messages
-  response <- continue_chat(chat_messages, system_message = system_prompt, model_name = code_model, max_tokens = 512, options = list(temperature = temperature))
+  response <- sullyplot_continue_chat(chat_messages, system_message = system_prompt, model_name = code_model, max_tokens = 512, options = list(temperature = temperature))
   code_string <- response$message
   total_usage_tokens <- response$usage_tokens
   all_chat_messages <- data.frame(role = c("user", "assistant"), content = c(code_gen_prompt, code_string))
@@ -64,7 +64,7 @@ auto_plot <- function(data, plot_columns, plot_description, num_code_attempts=5,
         # Increase temperature after each incorrect attempt
         temperature <- temperature + 0.1
       }
-      response <- continue_chat(chat_messages, system_message = system_prompt, model_name = code_model, max_tokens = 512, options = list(temperature = temperature))
+      response <- sullyplot_continue_chat(chat_messages, system_message = system_prompt, model_name = code_model, max_tokens = 512, options = list(temperature = temperature))
       code_string <- response$message
       total_usage_tokens <- mapply('+', total_usage_tokens, response$usage_tokens)
       all_chat_messages <- rbind(all_chat_messages, data.frame(role = c("user", "assistant"), content = c(attempt_results$new_prompt, code_string)))

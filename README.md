@@ -5,6 +5,7 @@ The `sullyplot` R Package provides a framework for automated plotting of graphs 
 ## Usage
 
 You should first set the `OPENAI_API_KEY` environment variable on whichever environment you are using.
+If you want to use the Azure OpenAI API, you will also need to set the `AZURE_RESOURCE_NAME` environment variable.
 
 Then simply use the functions from `sullyplot` with `sullyplot::function_name()` to use AI models.
 
@@ -27,4 +28,5 @@ Can be installed using `devtools::install_gitlab("isazi/hudson-packages/sullyplo
 5. `render_dash_pdf` - Renders a list of `ggplot` objects as a pdf file.
 
 ### Openai Chat Requests
-6. `sullyplot_continue_chat` - Makes a continue chat request with openai chat completion endpoint and tracks token usage.
+6. `sullyplot_openai_continue_chat` - Makes a continue chat request with openai chat completion endpoint and tracks token usage.
+7. `sullyplot_azure_continue_chat` - Makes a continue chat request with azure openai chat completion endpoint and tracks token usage.

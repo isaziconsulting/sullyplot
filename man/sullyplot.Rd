@@ -33,7 +33,8 @@ The \code{sullyplot} R Package provides a framework for automated plotting of gr
 
 \subsection{Openai Chat Requests}{
 \enumerate{
-\item \code{sullyplot_continue_chat} - Makes a continue chat request with openai chat completion endpoint and tracks token usage.
+\item \code{sullyplot_openai_continue_chat} - Makes a continue chat request with openai chat completion endpoint and tracks token usage.
+\item \code{sullyplot_azure_continue_chat} - Makes a continue chat request with azure openai chat completion endpoint and tracks token usage.
 }
 }
 

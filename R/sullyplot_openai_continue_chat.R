@@ -11,7 +11,7 @@
 #' @return The response message as well as the amount of prompt and completion tokens used.
 #'
 #' @export
-sullyplot_continue_chat <- function(chat_messages, system_message = NULL, model_name = "gpt-4", max_tokens = 150, options = list()) {
+sullyplot_openai_continue_chat <- function(chat_messages, system_message = NULL, model_name = "gpt-4", max_tokens = 150, options = list()) {
   openai_api_key <- Sys.getenv("OPENAI_API_KEY")
   if (openai_api_key == "") {
     stop("You need to set the OPENAI_API_KEY environment variable!")

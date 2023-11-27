@@ -6,8 +6,8 @@
 #' @param data The input data to create a dashboard from, can be either the path to a file (must be .csv or .xlsx) or a data frame.
 #' @param num_plots The number of plots in your dashboard. Default is 6.
 #' @param custom_description An optional description to describe the custom dashboard you want.
-#' @param dash_model The name of the language model to use for designing the dashboard. Default 'gpt-4'.
-#' @param code_model The name of the language model to use for coding individual plots. Default 'gpt-4'.
+#' @param dash_model The name of the language model to use for designing the dashboard, in the case of azure openai this is the deployment_id. Default 'gpt-4'.
+#' @param code_model The name of the language model to use for coding individual plots, in the case of azure openai this is the deployment_id. Default 'gpt-4'.
 #' @param temperature The temperature value for the language model designing the dashboard (does not affect code generation). Default is 0.1.
 #' @param num_design_attempts The number of iterations to improve on the dashboard design. Default is 2.
 #' @param num_code_attempts The maximum number of attempts to code your plot before failing - can take less if no errors are encountered in code generation. Default is 5.

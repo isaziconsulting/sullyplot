@@ -24,7 +24,7 @@ auto_plot(
 
 \item{num_code_attempts}{The maximum number of attempts to code your plot before failing - can take less if no errors are encountered in code generation. Default is 5.}
 
-\item{code_model}{The name of the language model to use for coding individual plots. Default 'gpt-4'.}
+\item{code_model}{The name of the language model to use for coding individual plots, in the case of azure openai this is the deployment_id. Default 'gpt-4'.}
 
 \item{save_messages}{Whether to save chat messages for the plotting code generation, useful for finetuning. Default is false.}
 

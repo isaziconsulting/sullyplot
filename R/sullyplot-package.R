@@ -21,7 +21,8 @@
 #' 5. `render_dash_pdf` - Renders a list of `ggplot` objects as a pdf file.
 #'
 #' ### Openai Chat Requests
-#' 6. `sullyplot_continue_chat` - Makes a continue chat request with openai chat completion endpoint and tracks token usage.
+#' 6. `sullyplot_openai_continue_chat` - Makes a continue chat request with openai chat completion endpoint and tracks token usage.
+#' 7. `sullyplot_azure_continue_chat` - Makes a continue chat request with azure openai chat completion endpoint and tracks token usage.
 #'
 #' @md
 #' @docType package

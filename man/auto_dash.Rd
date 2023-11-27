@@ -27,9 +27,9 @@ auto_dash(
 
 \item{custom_description}{An optional description to describe the custom dashboard you want.}
 
-\item{dash_model}{The name of the language model to use for designing the dashboard. Default 'gpt-4'.}
+\item{dash_model}{The name of the language model to use for designing the dashboard, in the case of azure openai this is the deployment_id. Default 'gpt-4'.}
 
-\item{code_model}{The name of the language model to use for coding individual plots. Default 'gpt-4'.}
+\item{code_model}{The name of the language model to use for coding individual plots, in the case of azure openai this is the deployment_id. Default 'gpt-4'.}
 
 \item{temperature}{The temperature value for the language model designing the dashboard (does not affect code generation). Default is 0.1.}
 

@@ -6,7 +6,7 @@
 #' @param plot_columns The list of names of columns in your dataframe which are relevant to the plot.
 #' @param plot_description The description of the plot you want.
 #' @param num_code_attempts The maximum number of attempts to code your plot before failing - can take less if no errors are encountered in code generation. Default is 5.
-#' @param code_model The name of the language model to use for coding individual plots. Default 'gpt-4'.
+#' @param code_model The name of the language model to use for coding individual plots, in the case of azure openai this is the deployment_id. Default 'gpt-4'.
 #' @param save_messages Whether to save chat messages for the plotting code generation, useful for finetuning. Default is false.
 #' @param save_dir The directory to save chat messages in.
 #' @param save_name The name to save chat messages under. Default is "auto_plot".
@@ -24,6 +24,8 @@
 auto_plot <- function(data, plot_columns, plot_description, num_code_attempts=5, code_model="gpt-4", save_messages=FALSE, save_dir="", save_name="auto_plot") {
   temperature <- 0
   input_df <- read_data(data)
+  using_azure <- is_azure_openai_configured()
+  
   # Filter only the input columns that were chosen for this plot
   filtered_input_df <- filter_df(input_df, plot_columns)
   filtered_summary <- summarise_df(filtered_input_df, remove_cols=FALSE)
@@ -32,11 +34,16 @@ auto_plot <- function(data, plot_columns, plot_description, num_code_attempts=5,
   code_gen_prompt <- sprintf(generate_code_prompt, plot_description, to_csv(filtered_summary_df))
   log("First code gen prompt:")
   log(code_gen_prompt)
-  
-  # Make an initial attempt at coding the plot
   chat_messages <- data.frame(role = "user",  content = code_gen_prompt)
   all_chat_messages <- chat_messages
-  response <- sullyplot_continue_chat(chat_messages, system_message = system_prompt, model_name = code_model, max_tokens = 512, options = list(temperature = temperature))
+  
+  # Make an initial attempt at coding the plot
+  if(using_azure) {
+    response <- sullyplot_azure_continue_chat(chat_messages, system_message = system_prompt, deployment_id = code_model, max_tokens = 512, options = list(temperature = temperature))
+  } else {
+    response <- sullyplot_openai_continue_chat(chat_messages, system_message = system_prompt, model_name = code_model, max_tokens = 512, options = list(temperature = temperature))
+  }
+  
   code_string <- response$message
   total_usage_tokens <- response$usage_tokens
   all_chat_messages <- data.frame(role = c("user", "assistant"), content = c(code_gen_prompt, code_string))
@@ -46,6 +53,7 @@ auto_plot <- function(data, plot_columns, plot_description, num_code_attempts=5,
     if(save_messages) {
       save_chat_messages(all_chat_messages, sprintf("%s/%s_all.json", save_dir, save_name))
     }
+    
     attempt_results <- make_plot_attempt(code_string, input_df)
     if (attempt_results$success) {
       log(sprintf("Final code: \n%s\n", code_string))
@@ -60,14 +68,22 @@ auto_plot <- function(data, plot_columns, plot_description, num_code_attempts=5,
         role = c("user", "user"),
         content = c(code_gen_prompt, attempt_results$new_prompt)
       )
+      
       if(temperature < 0.5) {
         # Increase temperature after each incorrect attempt
         temperature <- temperature + 0.1
       }
-      response <- sullyplot_continue_chat(chat_messages, system_message = system_prompt, model_name = code_model, max_tokens = 512, options = list(temperature = temperature))
+      
+      if(using_azure) {
+        response <- sullyplot_azure_continue_chat(chat_messages, system_message = system_prompt, deployment_id = code_model, max_tokens = 512, options = list(temperature = temperature))
+      } else {
+        response <- sullyplot_openai_continue_chat(chat_messages, system_message = system_prompt, model_name = code_model, max_tokens = 512, options = list(temperature = temperature))
+      }
+
       code_string <- response$message
       total_usage_tokens <- mapply('+', total_usage_tokens, response$usage_tokens)
       all_chat_messages <- rbind(all_chat_messages, data.frame(role = c("user", "assistant"), content = c(attempt_results$new_prompt, code_string)))
+      
     } else if (!is.null(attempt_results$plot_obj)) {
       # If we're out of attempts but have a non-null plot object then use the plot object
       return(list(code_string = code_string, plot_obj = attempt_results$plot_obj, usage_tokens = total_usage_tokens))

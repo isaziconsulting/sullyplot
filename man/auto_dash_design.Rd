@@ -45,7 +45,7 @@ auto_dash_design(
 \item{save_name}{The name to save chat messages under (will be suffixed for each step). Default is "auto_dash".}
 }
 \value{
-A dataframe consisting of the columns input_columns - a list of lists of the input columns necessary for each plot; and descriptions - a list of descriptions of each plot.
+A dataframe consisting of the columns input_columns - a list of lists of the input columns necessary for each plot; descriptions - a list of descriptions of each plot; and usage_tokens - the total number prompt and completion tokens used.
 }
 \description{
 This function automatically generates a dataframe describing the design of a dashboard for the given file or file summary,

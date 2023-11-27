@@ -61,6 +61,10 @@ continue_chat <- function(chat_messages, system_message = NULL, model_name = "gp
   # Extract the response message from the response
   response_message <- parsed_response$choices$message$content[[1]]
   
-  # Return the response message
-  return(response_message)
+  # Also return tokens for collecting usage statistics
+  prompt_tokens <- parsed_response$usage$prompt_tokens[[1]]
+  completion_tokens <- parsed_response$usage$completion_tokens[[1]]
+  usage_tokens <- list(prompt_tokens=prompt_tokens, completion_tokens=completion_tokens)
+  
+  return(list(message=response_message, usage_tokens=usage_tokens))
 }

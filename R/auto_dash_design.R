@@ -17,7 +17,7 @@
 #' @param save_dir The directory to save chat messages in.
 #' @param save_name The name to save chat messages under (will be suffixed for each step). Default is "auto_dash".
 #'
-#' @return A dataframe consisting of the columns input_columns - a list of lists of the input columns necessary for each plot; and descriptions - a list of descriptions of each plot.
+#' @return A dataframe consisting of the columns input_columns - a list of lists of the input columns necessary for each plot; descriptions - a list of descriptions of each plot; and usage_tokens - the total number prompt and completion tokens used.
 #'
 #' @export
 auto_dash_design <- function(data, summary = NULL, num_plots = 6, custom_description="", dash_model="gpt-4", temperature=0.1, num_design_attempts=2, max_cols=10, filter_pk_cols=FALSE, save_messages=TRUE, save_dir="sullyplot_messages", save_name="auto_dash") {
@@ -37,25 +37,32 @@ auto_dash_design <- function(data, summary = NULL, num_plots = 6, custom_descrip
   log(user_prompt)
   chat_messages <- data.frame(role = "user", content = user_prompt)
   all_chat_messages <- chat_messages
-  response_json <- continue_chat(chat_messages, system_message = system_prompt, model_name = dash_model, max_tokens = 1024, options = list(temperature = temperature))
-  all_chat_messages <- data.frame(role = c("user", "assistant"), content = c(user_prompt, response_json))
+  response <- continue_chat(chat_messages, system_message = system_prompt, model_name = dash_model, max_tokens = 1024, options = list(temperature = temperature))
+  plot_info_json <- response$message
+  total_usage_tokens <- response$usage_tokens
+  
+  all_chat_messages <- data.frame(role = c("user", "assistant"), content = c(user_prompt, plot_info_json))
   
   log("Initial dashboard design")
-  log(response_json)
+  log(plot_info_json)
   if (num_design_attempts > 0) {
     for(attempt_idx in 1:num_design_attempts) {
       log(sprintf("Improved dashboard design v%d", attempt_idx))
-      improve_dashboard_message <- sprintf(improve_dashboard_prompt, num_plots, response_json)
+      improve_dashboard_message <- sprintf(improve_dashboard_prompt, num_plots, plot_info_json)
       chat_messages_new <- rbind(chat_messages, data.frame(role = "user", content = improve_dashboard_message))
-      response_json <- continue_chat(chat_messages_new, system_message = system_prompt, model_name = dash_model, max_tokens = 1024, options = list(temperature = temperature))
-      all_chat_messages <- rbind(all_chat_messages, data.frame(role = c("user", "assistant"), content = c(improve_dashboard_message, response_json)))
-      log(response_json)
+      
+      response <- continue_chat(chat_messages_new, system_message = system_prompt, model_name = dash_model, max_tokens = 1024, options = list(temperature = temperature))
+      plot_info_json <- response$message
+      total_usage_tokens <- mapply('+', total_usage_tokens, reponse$usage_tokens)
+      
+      all_chat_messages <- rbind(all_chat_messages, data.frame(role = c("user", "assistant"), content = c(improve_dashboard_message, plot_info_json)))
+      log(plot_info_json)
     }
   }
-  plot_info <- jsonlite::fromJSON(response_json, simplifyDataFrame = FALSE, simplifyMatrix = FALSE)
+  plot_info_df <- jsonlite::fromJSON(plot_info_json, simplifyDataFrame = FALSE, simplifyMatrix = FALSE)
   if(save_messages) {
-    save_chat_messages(data.frame(role = c("system", "user", "assistant"), content = c(system_prompt, user_prompt, response_json)), sprintf("%s/%s_dash.json", save_dir, save_name))
+    save_chat_messages(data.frame(role = c("system", "user", "assistant"), content = c(system_prompt, user_prompt, plot_info_json)), sprintf("%s/%s_dash.json", save_dir, save_name))
     save_chat_messages(all_chat_messages, sprintf("%s/%s_dash_all.json", save_dir, save_name))
   }
-  return(plot_info)
+  return(list(plot_info_df = plot_info_df, usage_tokens = total_usage_tokens))
 }

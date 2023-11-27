@@ -33,7 +33,7 @@ auto_plot(
 \item{save_name}{The name to save chat messages under. Default is "auto_plot".}
 }
 \value{
-The list of `ggplot` objects representing the dashboard.
+The code string that was run to generate the plot, the corresponding `ggplot` object, and the total tokens used.
 }
 \description{
 This function automatically generates code and a `ggplot` object according to the described plot.
@@ -43,6 +43,6 @@ This function automatically generates code and a `ggplot` object according to th
 # Example usage with saving ggplots to a pdf
 my_plot <- auto_plot(iris_df, ["variety", "sepal.length"],
  "A box plot of sepal length for each variety to show the distribution of sepal length within each variety.")
-print(my_plot)
+print(my_plot$plot_obj)
 }
 }

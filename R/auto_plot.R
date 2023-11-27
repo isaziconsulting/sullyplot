@@ -11,17 +11,18 @@
 #' @param save_dir The directory to save chat messages in.
 #' @param save_name The name to save chat messages under. Default is "auto_plot".
 #'
-#' @return The list of `ggplot` objects representing the dashboard.
+#' @return The code string that was run to generate the plot, the corresponding `ggplot` object, and the total tokens used.
 #'
 #' @examples
 #' \dontrun{
 #' # Example usage with saving ggplots to a pdf
 #' my_plot <- auto_plot(iris_df, ["variety", "sepal.length"],
 #'  "A box plot of sepal length for each variety to show the distribution of sepal length within each variety.")
-#' print(my_plot)
+#' print(my_plot$plot_obj)
 #' }
 #' @export
 auto_plot <- function(data, plot_columns, plot_description, num_code_attempts=5, code_model="gpt-4", save_messages=FALSE, save_dir="", save_name="auto_plot") {
+  temperature <- 0
   input_df <- read_data(data)
   # Filter only the input columns that were chosen for this plot
   filtered_input_df <- filter_df(input_df, plot_columns)
@@ -35,9 +36,10 @@ auto_plot <- function(data, plot_columns, plot_description, num_code_attempts=5,
   # Make an initial attempt at coding the plot
   chat_messages <- data.frame(role = "user",  content = code_gen_prompt)
   all_chat_messages <- chat_messages
-  code_string <- continue_chat(chat_messages, system_message = system_prompt, model_name = code_model, max_tokens = 512, options = list(temperature = 0))
+  response <- continue_chat(chat_messages, system_message = system_prompt, model_name = code_model, max_tokens = 512, options = list(temperature = temperature))
+  code_string <- response$message
+  total_usage_tokens <- response$usage_tokens
   all_chat_messages <- data.frame(role = c("user", "assistant"), content = c(code_gen_prompt, code_string))
-  
   
   # Use a feedback loop to keep re-attempting to code the plot until either the plot is satisfactory or it runs out of attempts
   for(attempt_idx in 1:num_code_attempts) {
@@ -50,7 +52,7 @@ auto_plot <- function(data, plot_columns, plot_description, num_code_attempts=5,
       if(save_messages) {
         save_chat_messages(data.frame(role = c("system", "user", "assistant"), content = c(system_prompt, code_gen_prompt, code_string)), sprintf("%s/%s.json", save_dir, save_name))
       }
-      return(list(code_string = code_string, plot_obj = attempt_results$plot_obj))
+      return(list(code_string = code_string, plot_obj = attempt_results$plot_obj, usage_tokens = total_usage_tokens))
     } else if (attempt_idx < num_code_attempts) {
       log("Trying again with new prompt:")
       log(attempt_results$new_prompt)
@@ -58,11 +60,17 @@ auto_plot <- function(data, plot_columns, plot_description, num_code_attempts=5,
         role = c("user", "user"),
         content = c(code_gen_prompt, attempt_results$new_prompt)
       )
-      code_string <- continue_chat(chat_messages, system_message = system_prompt, model_name = code_model, max_tokens = 512, options = list(temperature = 0.6))
+      if(temperature < 0.5) {
+        # Increase temperature after each incorrect attempt
+        temperature <- temperature + 0.1
+      }
+      response <- continue_chat(chat_messages, system_message = system_prompt, model_name = code_model, max_tokens = 512, options = list(temperature = temperature))
+      code_string <- response$message
+      total_usage_tokens <- mapply('+', total_usage_tokens, response$usage_tokens)
       all_chat_messages <- rbind(all_chat_messages, data.frame(role = c("user", "assistant"), content = c(attempt_results$new_prompt, code_string)))
     } else if (!is.null(attempt_results$plot_obj)) {
       # If we're out of attempts but have a non-null plot object then use the plot object
-      return(list(code_string = code_string, plot_obj = attempt_results$plot_obj))
+      return(list(code_string = code_string, plot_obj = attempt_results$plot_obj, usage_tokens = total_usage_tokens))
     } else {
       stop("Ran out of attempts")
     }

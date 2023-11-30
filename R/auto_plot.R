@@ -30,6 +30,7 @@ auto_plot <- function(data, plot_columns, plot_description, num_code_attempts=5,
   filtered_input_df <- filter_df(input_df, plot_columns)
   filtered_summary <- summarise_df(filtered_input_df, remove_cols=FALSE)
   filtered_summary_df <- filtered_summary$df_stats
+  input_df <- filtered_summary$clean_df
   
   code_gen_prompt <- sprintf(generate_code_prompt, plot_description, to_csv(filtered_summary_df))
   log("First code gen prompt:")

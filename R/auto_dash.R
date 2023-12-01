@@ -36,14 +36,16 @@ auto_dash <- function(data, num_plots = 6, custom_description="", dash_model="gp
   design_params <- auto_dash_design(data=NULL, summary=summary, num_plots=num_plots, custom_description=custom_description, dash_model=dash_model, temperature=temperature, num_design_attempts=num_design_attempts,
                                 max_cols=max_cols, filter_pk_cols=filter_pk_cols, save_messages=save_messages, save_dir=save_dir, save_name=save_name)
   plot_info_df <- design_params$plot_info_df
-  log(sprintf("Dashboard design completed using %d prompt tokens and %d completion tokens", design_params$usage_tokens$prompt_tokens, design_params$usage_tokens$completion_tokens))
+  usage_tokens <- as.list(design_params$usage_tokens)
+  log(sprintf("Dashboard design completed using %d prompt tokens and %d completion tokens", usage_tokens$prompt_tokens, usage_tokens$completion_tokens))
   
   # Start coding the dashboard
   all_plots <- lapply(seq_along(plot_info_df$input_columns), function(idx) {
     log(sprintf("\nGenerating plot %d using the columns: %s", idx, paste(plot_info_df$input_columns[[idx]], collapse = ", ")))
     tryCatch({
       auto_plot_results <- auto_plot(input_df, plot_info_df$input_columns[[idx]], plot_info_df$descriptions[[idx]], num_code_attempts, code_model, save_messages, save_dir, sprintf("%s_plot_%d", save_name, idx))
-      log(sprintf("Plot %d completed using %d prompt tokens and %d completion tokens", idx, auto_plot_results$usage_tokens$prompt_tokens, auto_plot_results$usage_tokens$completion_tokens))
+      usage_tokens <- as.list(auto_plot_results$usage_tokens)
+      log(sprintf("Plot %d completed using %d prompt tokens and %d completion tokens", idx, usage_tokens$prompt_tokens, usage_tokens$completion_tokens))
       return(auto_plot_results$plot_obj)
     }, error = function(e) {
       log(sprintf("Failed to generate plot %d: %s", idx, e$message))

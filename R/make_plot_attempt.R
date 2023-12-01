@@ -1,5 +1,6 @@
 make_plot_attempt <- function(code_string, file_df) {
   tryCatch({
+    log(sprintf("Attempting to plot with code:\n%s", code_string))
     # First attempt to evaluate the code_string
     eval(parse(text = code_string))
     p <- plot_df(file_df)
@@ -19,6 +20,7 @@ make_plot_attempt <- function(code_string, file_df) {
       # A low quality plot can still be plotted if we run out of attempts, so return the plot object
       return(list(success = FALSE, plot_obj = p, new_prompt = user_prompt))
     } else {
+      log("Plot successful!")
       return(list(success = TRUE, plot_obj = p, new_prompt = ""))
     } 
   },

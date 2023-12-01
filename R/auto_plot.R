@@ -33,8 +33,7 @@ auto_plot <- function(data, plot_columns, plot_description, num_code_attempts=5,
   input_df <- filtered_summary$clean_df
   
   code_gen_prompt <- sprintf(generate_code_prompt, plot_description, to_csv(filtered_summary_df))
-  log("First code gen prompt:")
-  log(code_gen_prompt)
+  log(sprintf("Attempting to plot:\n%s", plot_description))
   chat_messages <- data.frame(role = "user",  content = code_gen_prompt)
   all_chat_messages <- chat_messages
   
@@ -46,6 +45,7 @@ auto_plot <- function(data, plot_columns, plot_description, num_code_attempts=5,
   }
   
   code_string <- response$message
+  log(sprintf("First code attempt:\n%s", response$message))
   total_usage_tokens <- response$usage_tokens
   all_chat_messages <- data.frame(role = c("user", "assistant"), content = c(code_gen_prompt, code_string))
   
@@ -57,14 +57,11 @@ auto_plot <- function(data, plot_columns, plot_description, num_code_attempts=5,
     
     attempt_results <- make_plot_attempt(code_string, input_df)
     if (attempt_results$success) {
-      log(sprintf("Final code: \n%s\n", code_string))
       if(save_messages) {
         save_chat_messages(data.frame(role = c("system", "user", "assistant"), content = c(system_prompt, code_gen_prompt, code_string)), sprintf("%s/%s.json", save_dir, save_name))
       }
       return(list(code_string = code_string, plot_obj = attempt_results$plot_obj, usage_tokens = total_usage_tokens))
     } else if (attempt_idx < num_code_attempts) {
-      log("Trying again with new prompt:")
-      log(attempt_results$new_prompt)
       chat_messages <- data.frame(
         role = c("user", "user"),
         content = c(code_gen_prompt, attempt_results$new_prompt)
@@ -82,6 +79,7 @@ auto_plot <- function(data, plot_columns, plot_description, num_code_attempts=5,
       }
 
       code_string <- response$message
+      log(sprintf("Attempt %d code:\n%s", attempt_idx, response$message))
       total_usage_tokens <- mapply('+', total_usage_tokens, response$usage_tokens)
       all_chat_messages <- rbind(all_chat_messages, data.frame(role = c("user", "assistant"), content = c(attempt_results$new_prompt, code_string)))
       

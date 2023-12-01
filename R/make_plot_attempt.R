@@ -24,7 +24,8 @@ make_plot_attempt <- function(code_string, file_df) {
   },
   error = function(e) {
     log(sprintf("Plot failed with the error: %s \n", e$message))
-    user_prompt <- sprintf(fix_error_prompt, code_string, e$message)
+    full_error_message <- capture.output(print(e))
+    user_prompt <- sprintf(fix_error_prompt, code_string, full_error_message)
     return(list(success = FALSE, plot_obj = NULL, new_prompt = user_prompt))
   })
 }

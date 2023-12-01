@@ -1,6 +1,5 @@
 make_plot_attempt <- function(code_string, file_df) {
   tryCatch({
-    log(sprintf("Attempting to plot with code:\n%s", code_string))
     # First attempt to evaluate the code_string
     eval(parse(text = code_string))
     p <- plot_df(file_df)

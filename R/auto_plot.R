@@ -45,7 +45,7 @@ auto_plot <- function(data, plot_columns, plot_description, num_code_attempts=5,
   }
   
   code_string <- response$message
-  log(sprintf("First code attempt:\n%s", response$message))
+  log(sprintf("First code attempt:\n%s", code_string))
   total_usage_tokens <- response$usage_tokens
   all_chat_messages <- data.frame(role = c("user", "assistant"), content = c(code_gen_prompt, code_string))
   
@@ -79,7 +79,7 @@ auto_plot <- function(data, plot_columns, plot_description, num_code_attempts=5,
       }
 
       code_string <- response$message
-      log(sprintf("Attempt %d code:\n%s", attempt_idx, response$message))
+      log(sprintf("Attempt %d code:\n%s", attempt_idx, code_string))
       total_usage_tokens <- mapply('+', total_usage_tokens, response$usage_tokens)
       all_chat_messages <- rbind(all_chat_messages, data.frame(role = c("user", "assistant"), content = c(attempt_results$new_prompt, code_string)))
       

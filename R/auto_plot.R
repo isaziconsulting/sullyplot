@@ -87,7 +87,7 @@ auto_plot <- function(data, plot_columns, plot_description, num_code_attempts=5,
       # If we're out of attempts but have a non-null plot object then use the plot object
       return(list(code_string = code_string, plot_obj = attempt_results$plot_obj, usage_tokens = total_usage_tokens))
     } else {
-      stop("Ran out of attempts")
+      stop(sprintf("Ran out of attempts with the error:\n%s", attempt_results$error))
     }
   }
 }

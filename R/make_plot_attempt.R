@@ -17,10 +17,10 @@ make_plot_attempt <- function(code_string, file_df) {
       log(sprintf("Plot was low quality: %s \n", low_quality$message))
       user_prompt <- sprintf(fix_low_quality_plot_prompt, code_string, low_quality$message)
       # A low quality plot can still be plotted if we run out of attempts, so return the plot object
-      return(list(success = FALSE, plot_obj = p, new_prompt = user_prompt))
+      return(list(success = FALSE, plot_obj = p, new_prompt = user_prompt, error = low_quality$message))
     } else {
       log("Plot successful!")
-      return(list(success = TRUE, plot_obj = p, new_prompt = ""))
+      return(list(success = TRUE, plot_obj = p, new_prompt = NULL, error = NULL))
     } 
   },
   error = function(e) {
@@ -28,7 +28,7 @@ make_plot_attempt <- function(code_string, file_df) {
     simplified_error <-   customErrorHandler(e)
     log(sprintf("Plot failed with the error: %s \n", simplified_error))
     user_prompt <- sprintf(fix_error_prompt, code_string, simplified_error)
-    return(list(success = FALSE, plot_obj = NULL, new_prompt = user_prompt))
+    return(list(success = FALSE, plot_obj = NULL, new_prompt = user_prompt, error = simplified_error))
   })
 }
 

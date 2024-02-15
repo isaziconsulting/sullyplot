@@ -2,6 +2,8 @@
 #' Makes a convenient summary structure from an input dataframe, providing some summary stats of each column as well as some examples in a format that's easy to interrogate.
 #'
 #' @param df - the data frame to be analysed
+#' @param remove_cols - whether to remove columns from the summary if there are more than the max. Default is `TRUE`.
+#' @param max_cols - the maximum number of columns to summarise if `remove_cols` is `TRUE`. Default is `10`.
 #'
 #' @return Returns a list containing two dataframes;clean_df and df_stats. 
 #'                                          clean_df will have 'cleaned' column names. 

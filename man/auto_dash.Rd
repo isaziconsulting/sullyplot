@@ -14,7 +14,6 @@ auto_dash(
   num_design_attempts = 2,
   num_code_attempts = 5,
   max_cols = 10,
-  filter_pk_cols = FALSE,
   save_messages = TRUE,
   save_dir = "sullyplot_messages",
   save_name = "auto_dash"
@@ -38,8 +37,6 @@ auto_dash(
 \item{num_code_attempts}{The maximum number of attempts to code your plot before failing - can take less if no errors are encountered in code generation. Default is 5.}
 
 \item{max_cols}{The maximum number of columns the LLM can 'see'. If more columns are provided in the file they will be sorted and the columns with the least NA and most information will be selected. Default is 10.}
-
-\item{filter_pk_cols}{Whether to filter out primary key columns, useful if you have a primary key like an id which you don't want plotted. Default is false.}
 
 \item{save_messages}{Whether to save chat messages and responses for each dashboard generation step, useful for finetuning. Default is false.}
 

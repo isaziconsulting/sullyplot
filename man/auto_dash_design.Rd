@@ -13,7 +13,6 @@ auto_dash_design(
   temperature = 0.1,
   num_design_attempts = 2,
   max_cols = 10,
-  filter_pk_cols = FALSE,
   save_messages = TRUE,
   save_dir = "sullyplot_messages",
   save_name = "auto_dash"
@@ -22,7 +21,7 @@ auto_dash_design(
 \arguments{
 \item{data}{The input data to design the dashboard from, can be either the path to a file (must be .csv or .xlsx) or a data frame. Not used if a summary is provided.}
 
-\item{summary}{Optional summary dataframe of the input file. Should be generated using `himunge::make_df_summary`.}
+\item{summary}{Optional summary dataframe of the input file for internal usage.}
 
 \item{num_plots}{The number of plots in your dashboard. Default is 6.}
 
@@ -35,8 +34,6 @@ auto_dash_design(
 \item{num_design_attempts}{The number of iterations to improve on the dashboard design. Default is 2.}
 
 \item{max_cols}{The maximum number of columns the LLM can 'see'. If more columns are provided in the file they will be sorted and the columns with the least NA and most information will be selected. Default is 10.}
-
-\item{filter_pk_cols}{Whether to filter out primary key columns, useful if you have a primary key like an id which you don't want plotted. Default is false.}
 
 \item{save_messages}{Whether to save chat messages and responses for each dashboard generation step, useful for finetuning. Default is false.}
 

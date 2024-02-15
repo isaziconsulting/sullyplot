@@ -5,14 +5,13 @@
 #' Useful for modifying designs and generating them with auto_plot.
 #'
 #' @param data The input data to design the dashboard from, can be either the path to a file (must be .csv or .xlsx) or a data frame. Not used if a summary is provided.
-#' @param summary Optional summary dataframe of the input file. Should be generated using `himunge::make_df_summary`.
+#' @param summary Optional summary dataframe of the input file for internal usage.
 #' @param num_plots The number of plots in your dashboard. Default is 6.
 #' @param custom_description An optional description to describe the custom dashboard you want.
 #' @param dash_model The name of the language model to use for designing the dashboard, in the case of azure openai this is the deployment_id. Default 'gpt-4'.
 #' @param temperature The temperature value for the language model designing the dashboard (does not affect code generation). Default is 0.1.
 #' @param num_design_attempts The number of iterations to improve on the dashboard design. Default is 2.
 #' @param max_cols The maximum number of columns the LLM can 'see'. If more columns are provided in the file they will be sorted and the columns with the least NA and most information will be selected. Default is 10.
-#' @param filter_pk_cols Whether to filter out primary key columns, useful if you have a primary key like an id which you don't want plotted. Default is false.
 #' @param save_messages Whether to save chat messages and responses for each dashboard generation step, useful for finetuning. Default is false.
 #' @param save_dir The directory to save chat messages in.
 #' @param save_name The name to save chat messages under (will be suffixed for each step). Default is "auto_dash".
@@ -20,10 +19,10 @@
 #' @return A dataframe consisting of the columns input_columns - a list of lists of the input columns necessary for each plot; descriptions - a list of descriptions of each plot; and usage_tokens - the total number prompt and completion tokens used.
 #'
 #' @export
-auto_dash_design <- function(data, summary = NULL, num_plots = 6, custom_description="", dash_model="gpt-4", temperature=0.1, num_design_attempts=2, max_cols=10, filter_pk_cols=FALSE, save_messages=TRUE, save_dir="sullyplot_messages", save_name="auto_dash") {
+auto_dash_design <- function(data, summary = NULL, num_plots = 6, custom_description="", dash_model="gpt-4", temperature=0.1, num_design_attempts=2, max_cols=10, save_messages=TRUE, save_dir="sullyplot_messages", save_name="auto_dash") {
   if(is.null(summary)) {
     input_df <- read_data(data)
-    summary <- summarise_df(input_df, remove_cols = TRUE, max_cols = max_cols, filter_pk_cols=filter_pk_cols)
+    summary <- summarise_df(input_df, remove_cols = TRUE, max_cols = max_cols)
   }
   input_df <- summary$clean_df
   summary_df <- summary$df_stats

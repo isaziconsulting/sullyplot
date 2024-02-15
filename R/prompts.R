@@ -65,7 +65,7 @@ describe_custom_dashboard_prompt <- "Design this dashboard consisting of %d plot
   Here are the available plot types & rules:
     scatter plots - must have only quantitatives on the x and y axes, and an optional 3rd categorical or quantitative column for colour (if you use a quantitative for colour, specify to use a continuous colour scale).
     line plot - must have a DateTime column on the x-axis, a quantitative on the y axis, and an optional 3rd categorical column for colour.
-    box plots - must have a categorical on the x-axis, a quantitative on the y axis, and an optional 3rd categorical or quantitative column for separate y-axes or grouped box plots.
+    box plots - must have a categorical on the x-axis, a quantitative on the y axis, and an optional 3rd categorical column for separate y-axes or grouped box plots, or an optional 3rd quantitative column to be plotted on a separate y axis.
     histogram - must have a quantitative on the x-axis in bins, counts on the y axis, and an optional 2nd categorical column for stacked bars, multiple axes, or colour.
     bar chart - must have a categorical on the x-axis and counts on the y axis, and an optional 3rd categorical column for stacked bars or multiple axes.
 
@@ -83,11 +83,16 @@ improve_dashboard_prompt <- "Can you improve on previous response by replacing p
 
 Most importantly, replace any plots that do not follow the previously stated DASHBOARD RULES.
 
-Then, where appropriate and not present already, add or improve existing visual enhancements, including:
-- Add categorical columns if available in the summary to show relationships accross different categories where relevant
-- Group related plots together into one plot - e.g. If there are two box/bar plots with the same categories use multiple separate y-axes to plot them as a single `ggplot`. Or if there are two scatter plots with the same x-axis, group them into one `ggplot` with separate y-axes.
-- Add 95%% prediction elipses per category for any scatter plots that have a categorical column
+Replace any plots that don't make logical sense (e.g. a plot with an id number used a continuous value)
+
+Replace any plot that shows too many relationships and would end up too cluttered - you can also specify how to make it less cluttered if possible (e.g. only show the 10 most sold products).
+
+Then, where appropriate and not present already, add or improve existing visual enhancements, these may include:
+- Where relevant according to the DASHBOARD RULES, add categorical columns with n_distinct < 5 from the summary if they are logically relevant to show relationships accross different categories
+- Group related plots together into one plot - e.g. If there are two box/bar plots with the same categories use multiple separate y-axes to plot them as a single `ggplot` - be cautious that you don't include a large number of separate y axes.
+- Add 95%% prediction elipses per category for any scatter plots that have a categorical column for colour
 - Add lines of best fit with 5%% confidence intervals to line plots, and scatter plots that do not have a categorical column
+- Be creative to make the plot more interesting and insightful
 
 Finally, replace any redundant or highly similar plots with different plots then make sure there are %d plots in total and add new plots if there aren't.
 
@@ -114,13 +119,14 @@ generate_code_prompt <- "I want to create this plot: %s
       Only ever colour by category if the column you are using for colouring has the type 'Categorical' in the provided summary.
     
     *** OUTPUT RULES ***
-      Only ever return a single function called `plot_df`
-      Make sure the `plot_df` function returns a `ggplot` object
-      DO NOT include comments
       Include library requirements with require() statements
+      Make sure the `plot_df` function returns a `ggplot` object
       All plots must have a concise title and axes must be labelled
-      Respond with only the string of code, without any surrounding formatting like single or double inverted commas or backticks
       Features must be placed on the axes specified in the plot description (e.g. type on x-axis and count on y-axis)
+      Respond with the R code for the `plot_df` function only, without any formatting such as backticks, quotation marks, or markdown syntax.
+      The response should consist solely of the R code, starting with `plot_df <- function(df) {` and ending with the closing brace `}`.
+      DO NOT include comments in the code.
+
     Here is a summary of the columns in the input data frame df:
     %s"
   

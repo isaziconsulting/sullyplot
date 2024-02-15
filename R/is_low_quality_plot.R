@@ -1,4 +1,4 @@
-is_low_quality_plot <- function(plot_obj, data_point_threshold = 10,  min_bars_threshold = 2, max_bars_threshold = 100, min_bins_threshold = 5, max_bins_threshold = 100, axis_ticks_threshold = 30, legend_threshold = 20) {
+is_low_quality_plot <- function(plot_obj, data_point_threshold = 10,  min_bars_threshold = 2, max_bars_threshold = 1000, min_bins_threshold = 2, max_bins_threshold = 1000, axis_ticks_threshold = 30, legend_threshold = 20) {
   tryCatch({
     # Status is added to when there's errors that can be corrected together (e.g. too many ticks on x and y axis)
     low_quality_status <- list(status = FALSE, message = "")

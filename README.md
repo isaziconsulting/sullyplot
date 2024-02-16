@@ -13,7 +13,7 @@ If you want to use the Azure OpenAI API, you will also need to set the `AZURE_RE
 
 Then simply use the functions from `sullyplot` with `sullyplot::function_name()` to use AI models.
 
-Can be installed using `devtools::install_github("KelianM/sullyplot@main")`.
+Can be installed using `devtools::install_github("isaziconsulting/sullyplot@main")`.
 
 ## Customizing the AI Model
 

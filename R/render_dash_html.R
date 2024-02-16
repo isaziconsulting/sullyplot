@@ -13,7 +13,7 @@
 #' \donttest{
 #'    # Example usage converting plots from `auto_dash` to a pdf dashboard
 #'    output_dir <- tempdir() # Define output directory for saving the dashboard
-#'    all_plots <- sullyplot::auto_dash(system.file("examples/iris.csv", package = "sullyplot"))
+#'    all_plots <- sullyplot::auto_dash(system.file("examples/example_data/iris.csv", package = "sullyplot"))
 #'    sullyplot::render_dash_html(all_plots, filename=file.path(output_dir, "my_dash.html"), display=TRUE)
 #'
 #'    # Note: In actual use, replace tempdir() with a specific directory

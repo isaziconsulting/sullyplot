@@ -18,7 +18,7 @@
 #'    # Generating a box plot for Bilirubin levels by Status
 #'    output_dir <- tempdir() # Define output directory for saving the plot
 #'    plot_results <- sullyplot::auto_plot(
-#'      system.file("examples/cirrhosis.csv", package="sullyplot"),
+#'      system.file("examples/example_data/cirrhosis.csv", package="sullyplot"),
 #'      c("Status", "Bilirubin"),
 #'      "A box plot showing the distribution of Bilirubin levels for each Status category. The x-axis should be the Status category and the y-axis should be the Bilirubin levels. This plot will show if there are differences in Bilirubin levels across different Status categories.",
 #'      num_code_attempts=5,

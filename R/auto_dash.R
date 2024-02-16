@@ -21,7 +21,7 @@
 #' @examples
 #' \donttest{
 #'    # Basic usage on the iris dataset
-#'    all_plots <- sullyplot::auto_dash(system.file("examples/iris.csv", package = "sullyplot"), 
+#'    all_plots <- sullyplot::auto_dash(system.file("examples/example_data/iris.csv", package = "sullyplot"), 
 #'                                      num_plots=4,
 #'                                      num_design_attempts=1,
 #'                                      num_code_attempts=5,
@@ -30,7 +30,7 @@
 #'
 #'    # With a custom description for specific plots
 #'    description <- "Two box plots for lengths and widths (use two y axes per plot to show petal and sepal lengths/widths together), and 2 scatter plots of lengths vs widths. All should be grouped by variety."
-#'    all_plots <- sullyplot::auto_dash(system.file("examples/iris.csv", package = "sullyplot"), 
+#'    all_plots <- sullyplot::auto_dash(system.file("examples/example_data/iris.csv", package = "sullyplot"), 
 #'                                     num_plots=4,
 #'                                     num_design_attempts=1,
 #'                                     num_code_attempts=5,

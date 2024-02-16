@@ -22,7 +22,7 @@ can be created using `auto_dash`, `auto_plot`, or created separately from this p
 \donttest{
 # Example usage converting plots from `auto_dash` to a pdf dashboard
 output_dir <- tempdir() # Define output directory for saving the dashboard
-all_plots <- sullyplot::auto_dash(system.file("examples/iris.csv", package = "sullyplot"))
+all_plots <- sullyplot::auto_dash(system.file("examples/example_data/iris.csv", package = "sullyplot"))
 sullyplot::render_dash_pdf(all_plots, filename=file.path(output_dir, "my_dash.pdf"))
 }
 

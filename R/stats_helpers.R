@@ -269,7 +269,7 @@ autoconvert_dataframe <- function(df, exclusions = NULL){
     if(!all(is.na(df[[i]]))){
       for(fmt in names(converters)){
         cvt <- converters[[fmt]]
-        if(all(cvt$is_match(df[[i]]))){
+        if(all(cvt$is_match(df[[i]]), na.rm = TRUE)){
           formats[[i]] <- fmt
           df[[i]] <- cvt$method(df[[i]])
           break

@@ -19,7 +19,7 @@
 #' @return The list of `ggplot` objects representing the dashboard.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'    # Basic usage on the iris dataset
 #'    all_plots <- sullyplot::auto_dash(system.file("examples/iris.csv", package = "sullyplot"), 
 #'                                      num_plots=4,

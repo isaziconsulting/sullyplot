@@ -14,7 +14,7 @@
 #' @return The code string that was run to generate the plot, the corresponding `ggplot` object, and the total tokens used.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'    # Generating a box plot for Bilirubin levels by Status
 #'    output_dir <- tempdir() # Define output directory for saving the plot
 #'    plot_results <- sullyplot::auto_plot(

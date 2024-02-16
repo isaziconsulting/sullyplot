@@ -10,7 +10,7 @@
 #' @return The html code for the interactive dashboard.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'   # Create an example plot with the mtcars dataset
 #'   library(ggplot2)
 #'   example_plot <- ggplot(mtcars, aes(x=wt, y=mpg)) +

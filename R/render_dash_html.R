@@ -10,7 +10,7 @@
 #' @return The html code for the interactive dashboard.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #'    # Example usage converting plots from `auto_dash` to a pdf dashboard
 #'    output_dir <- tempdir() # Define output directory for saving the dashboard
 #'    all_plots <- sullyplot::auto_dash(system.file("examples/iris.csv", package = "sullyplot"))

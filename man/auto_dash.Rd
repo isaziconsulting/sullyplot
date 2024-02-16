@@ -52,7 +52,7 @@ This function automatically generates a dashboard of `ggplot` objects from your 
 It allows you to specify the number of plots and a custom description of your dashboard.
 }
 \examples{
-\dontrun{
+\donttest{
    # Basic usage on the iris dataset
    all_plots <- sullyplot::auto_dash(system.file("examples/iris.csv", package = "sullyplot"), 
                                      num_plots=4,

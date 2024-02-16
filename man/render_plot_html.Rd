@@ -15,9 +15,13 @@ render_plot_html(plot, filename = NULL, display = FALSE)
 }
 \value{
 The html code for the interactive dashboard.
-
-#' @examples
-\dontrun{
+}
+\description{
+This function renders a `ggplot` object as an interactive plotly-based html plot
+with the option to save and display it.
+}
+\examples{
+\donttest{
   # Create an example plot with the mtcars dataset
   library(ggplot2)
   example_plot <- ggplot(mtcars, aes(x=wt, y=mpg)) +
@@ -34,8 +38,5 @@ The html code for the interactive dashboard.
   # Note: In actual use, replace tempdir() with a specific directory
   # and ensure the directory exists or is created before saving.
 }
-}
-\description{
-This function renders a `ggplot` object as an interactive plotly-based html plot
-with the option to save and display it.
+
 }

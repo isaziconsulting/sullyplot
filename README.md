@@ -2,6 +2,10 @@
 
 The `sullyplot` R Package provides a framework for automated plotting of graphs and dashboards using OpenAI's latest LLMs.
 
+## Maintainer
+
+Kelian Massa - Initial Developer ([@KelianM](https://github.com/KelianM))
+
 ## Disclaimer
 
 This package interacts with OpenAI's APIs or Azure OpenAI depending on what you configure, to design and generate dashboards based on a series of prompts. **Please note that using these services incurs costs**, so be sure to review the pricing details on the OpenAI and Azure OpenAI websites and monitor your usage accordingly.

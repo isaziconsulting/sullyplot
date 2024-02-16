@@ -40,9 +40,21 @@ This function automatically generates code and a `ggplot` object according to th
 }
 \examples{
 \dontrun{
-# Example usage with saving ggplots to a pdf
-my_plot <- auto_plot(iris_df, ["variety", "sepal.length"],
- "A box plot of sepal length for each variety to show the distribution of sepal length within each variety.")
-print(my_plot$plot_obj)
+   # Generating a box plot for Bilirubin levels by Status
+   output_dir <- tempdir() # Define output directory for saving the plot
+   plot_results <- sullyplot::auto_plot(
+     system.file("examples/cirrhosis.csv", package="sullyplot"),
+     c("Status", "Bilirubin"),
+     "A box plot showing the distribution of Bilirubin levels for each Status category. The x-axis should be the Status category and the y-axis should be the Bilirubin levels. This plot will show if there are differences in Bilirubin levels across different Status categories.",
+     num_code_attempts=5,
+     code_model="gpt-4"
+   )
+   # Save the generated plot
+   ggplot2::ggsave(file.path(output_dir, "cirrhosis_bilirubin_status_plot.png"), plot = plot_results$plot_obj, width = 10, height = 8, dpi = 300)
+
+   # Note: In actual use, replace tempdir() with a specific directory
+   # and ensure the directory exists or is created before saving.
 }
+
+
 }

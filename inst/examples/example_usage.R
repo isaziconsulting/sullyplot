@@ -68,8 +68,8 @@ auto_plot_custom_examples <- function() {
 
   # Example for a single plot
   file_path <- file.path(example_data_dir, "cirrhosis.csv")
-  p <- sullyplot::auto_plot(file_path, c("Status","Bilirubin"), "A box plot showing the distribution of Bilirubin levels for each Status category. The x-axis should be the Status category and the y-axis should be the Bilirubin levels. This plot will show if there are differences in Bilirubin levels across different Status categories.")
-  ggplot2::ggsave(file.path(output_dir, "custom_plot.png"), plot = p, width = 10, height = 8, dpi = 300)
+  plot_results <- sullyplot::auto_plot(file_path, c("Status","Bilirubin"), "A box plot showing the distribution of Bilirubin levels for each Status category. The x-axis should be the Status category and the y-axis should be the Bilirubin levels. This plot will show if there are differences in Bilirubin levels across different Status categories.")
+  ggplot2::ggsave(file.path(output_dir, "custom_plot.png"), plot = plot_results$plot_obj, width = 10, height = 8, dpi = 300)
 }
 
 # To run all examples

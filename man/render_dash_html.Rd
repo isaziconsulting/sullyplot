@@ -22,9 +22,13 @@ can be created using `auto_dash`, `auto_plot`, or created separately from this p
 }
 \examples{
 \dontrun{
-# Example usage converting plots from `auto_dash` to an interactive dashboard
-all_plots <- auto_dash("iris.csv")
-render_dash_html(all_plots, filename="my_dash.html", display=TRUE)
+   # Example usage converting plots from `auto_dash` to a pdf dashboard
+   output_dir <- tempdir() # Define output directory for saving the dashboard
+   all_plots <- sullyplot::auto_dash(system.file("examples/iris.csv", package = "sullyplot"))
+   sullyplot::render_dash_html(all_plots, filename=file.path(output_dir, "my_dash.html"), display=TRUE)
+
+   # Note: In actual use, replace tempdir() with a specific directory
+   # and ensure the directory exists or is created before saving.
 }
 
 }

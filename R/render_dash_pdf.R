@@ -5,16 +5,17 @@
 #'
 #' @param all_plots The list of `ggplot` objects to render as an interactive dashboard.
 #' @param filename The filename to save the pdf file under (must be .pdf).
-#' 
+#'
 #' @return The html code for the interactive dashboard.
 #'
 #' @examples
 #' \dontrun{
 #' # Example usage converting plots from `auto_dash` to a pdf dashboard
-#' all_plots <- auto_dash("iris.csv")
-#' render_dash_pdf(all_plots, filename="my_dash.pdf")
+#' output_dir <- tempdir() # Define output directory for saving the dashboard
+#' all_plots <- sullyplot::auto_dash(system.file("examples/iris.csv", package = "sullyplot"))
+#' sullyplot::render_dash_pdf(all_plots, filename=file.path(output_dir, "my_dash.pdf"))
 #' }
-#' 
+#'
 #' @importFrom gridExtra grid.arrange
 #' @export
 render_dash_pdf <- function(all_plots, filename) {

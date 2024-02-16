@@ -14,7 +14,7 @@ auto_dash(
   num_design_attempts = 2,
   num_code_attempts = 5,
   max_cols = 10,
-  save_messages = TRUE,
+  save_messages = FALSE,
   save_dir = "sullyplot_messages",
   save_name = "auto_dash"
 )
@@ -53,10 +53,23 @@ It allows you to specify the number of plots and a custom description of your da
 }
 \examples{
 \dontrun{
-# Example usage of a custom dashboard with saving list of ggplots to a pdf
-all_plots <- auto_dash("auto-dash/kaggle_data/train/iris.csv", num_design_attempts=1, save_messages=TRUE, save_dir="sullyplot_messages", save_name="iris_custom",
-custom_description="Two box plots for lengths and widths (use two y axes per plot to show petal and sepal lengths/widths together), and 2 scatter plots of lengths vs widths. All should be grouped by variety.")
-render_dash_pdf(all_plots, "my_dash.pdf")
+   # Basic usage on the iris dataset
+   all_plots <- sullyplot::auto_dash(system.file("examples/iris.csv", package = "sullyplot"), 
+                                     num_plots=4,
+                                     num_design_attempts=1,
+                                     num_code_attempts=5,
+                                     code_model = "gpt-4",
+                                     dash_model = "gpt-4")
+
+   # With a custom description for specific plots
+   description <- "Two box plots for lengths and widths (use two y axes per plot to show petal and sepal lengths/widths together), and 2 scatter plots of lengths vs widths. All should be grouped by variety."
+   all_plots <- sullyplot::auto_dash(system.file("examples/iris.csv", package = "sullyplot"), 
+                                    num_plots=4,
+                                    num_design_attempts=1,
+                                    num_code_attempts=5,
+                                    code_model = "gpt-4",
+                                    dash_model = "gpt-4",
+                                    custom_description=description)
 }
 
 }

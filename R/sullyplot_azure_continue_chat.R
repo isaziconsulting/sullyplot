@@ -69,7 +69,7 @@ sullyplot_azure_continue_chat <- function(chat_messages, system_message = NULL, 
     pause_base = 2, # Base of the exponential back-off
     pause_min = 1, # Minimum delay between retries in seconds
     pause_growth = 1, # Growth factor for the exponential back-off
-    verbose = 0, # Verbosity level
+    verbose = 1, # Verbosity level
     terminate_on = c(400, 401, 404)
   )
   

@@ -2,12 +2,9 @@
 #' Makes a convenient summary structure from an input dataframe, providing some summary stats of each column as well as some examples in a format that's easy to interrogate.
 #'
 #' @param df - the data frame to be analysed
-#' @param remove_cols - whether to remove columns from the summary if there are more than the max. Default is `TRUE`.
-#' @param max_cols - the maximum number of columns to summarise if `remove_cols` is `TRUE`. Default is `10`.
+#' @param max_cols - the maximum number of columns to summarise. Default is `10`.
 #'
-#' @return Returns a list containing two dataframes;clean_df and df_stats. 
-#'                                          clean_df will have 'cleaned' column names. 
-#'                                          stats_df will contain original and clean data as well some summary stats.
+#' @return Returns a df of summary stats for each column.
 #' @importFrom rlang .data
 summarise_df <- function(df, remove_cols=TRUE, max_cols=10) {
   df_stats <- data.frame(name = names(df))
@@ -17,23 +14,13 @@ summarise_df <- function(df, remove_cols=TRUE, max_cols=10) {
   # Use original names
   names(df_prime) <- names(df)
   names(fmts) <- names(df)
-
-  # Convert ints with less than 10 values to text so they can be used as categoricals
-  df_prime[] <- lapply(names(df_prime), function(col_name) {
-    x <- df_prime[[col_name]]
-    if(length(unique(x)) <= 10) {
-      df_prime[[col_name]] <- as.character(x)
-      fmts[[col_name]] <<- "text"
-    }
-    return(df_prime[[col_name]])
-  })
   
   cat_cutoff <- pmax(nrow(df_prime)/10000, 20)
   df_stats$type <- sapply(df_prime, function(x){
     cx <- paste(class(x), collapse=", ")
     lux <- length(unique(x))
-    if(cx == "character" & lux <= cat_cutoff)return("Categorical")
-    if(cx == "character" & lux < length(x) / 10)return("Large Categorical")
+    if(lux <= cat_cutoff)return("Categorical")
+    if(lux < length(x) / 10)return("Large Categorical")
     if(cx == "character")return("Free Text")
     if(stringr::str_detect(cx, "POSIX"))return("DateTime")
     return(cx)
@@ -42,7 +29,6 @@ summarise_df <- function(df, remove_cols=TRUE, max_cols=10) {
   
   df_stats$num_na <- sapply(df_prime, function(x)sum(is.na(x)))
   df_stats$n_distinct <- sapply(df_prime, dplyr::n_distinct)
-  # df_stats$is_identifier <- (df_stats$n_distinct == df_stats$count) && df_stats$type
   df_stats$levels <- sapply(df_prime, function(x){
                                         if(dplyr::n_distinct(x) <= cat_cutoff)return(paste(as.character(unique(x)), collapse=", "))
                                         return("")
@@ -69,22 +55,18 @@ summarise_df <- function(df, remove_cols=TRUE, max_cols=10) {
     dplyr::sample_n(df_prime, 3)
   }
   
-  if (remove_cols) {
-    # Filter out free text and primary key columns which are useless for EDA
+  # If we have too many cols, filter out free text columns which are useless for EDA in most cases
+  if (nrow(df_stats) > max_cols) {
     df_stats <- df_stats[!df_stats$type %in% c("Free Text"), ]
-    # Filter out columns with no information (no entropy)
-    df_stats <- df_stats[df_stats$information > 0, ]
   }
   
+  # If we still have too many cols, teturns the n cols with the least num_na and then most information
   if (nrow(df_stats) > max_cols) {
-    # Returns the n rows with the lest num_na and then most information
     df_stats <- df_stats[order(df_stats$num_na, -df_stats$information), ]
     df_stats <- df_stats[1:max_cols, ]
   }
 
-    # Remove columns from input df that were removed from df stats
-  df_prime <- df_prime[, colnames(df_prime) %in% df_stats$name]
-  return(list(clean_df = df_prime, df_stats = df_stats))
+  return(df_stats)
 }
 
 #' mi_matrix

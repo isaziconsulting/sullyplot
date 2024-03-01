@@ -104,7 +104,8 @@ Your previous response was:
 
 generate_code_prompt <- "I want to create this plot: %s
     Please provide a function in R called 'plot_df' that takes a dataframe 'df' as its argument, processes it, and then directly returns a `ggplot` object.
-    The function should handle the necessary data transformation, statistical analyses, and plotting within it.
+    The function must perform preprocessing, data transformation, statistical analyses, and plotting.
+    Preprocessing includes converting numeric variables to factors with `as.factor()` when used categorically.
     Only if the plot specifically states to use separate y-axes, use `facet_wrap` to show them.
 
     *** STYLING RULES ***

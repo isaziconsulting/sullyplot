@@ -43,9 +43,8 @@
 #' @export
 auto_dash <- function(data, num_plots = 6, custom_description="", dash_model="gpt-4", code_model="gpt-4", temperature=0.1, num_design_attempts=2, num_code_attempts=5, max_cols=10, save_messages=FALSE, save_dir="sullyplot_messages", save_name="auto_dash") {
   input_df <- read_data(data)
-  summary <- summarise_df(input_df, remove_cols = TRUE, max_cols = max_cols)
-  input_df <- summary$clean_df
-  design_params <- auto_dash_design(data=NULL, summary=summary, num_plots=num_plots, custom_description=custom_description, dash_model=dash_model, temperature=temperature, num_design_attempts=num_design_attempts,
+  summary <- summarise_df(input_df, max_cols = max_cols)
+  design_params <- auto_dash_design(data=data, summary=summary, num_plots=num_plots, custom_description=custom_description, dash_model=dash_model, temperature=temperature, num_design_attempts=num_design_attempts,
                                 max_cols=max_cols, save_messages=save_messages, save_dir=save_dir, save_name=save_name)
   plot_info_df <- design_params$plot_info_df
   usage_tokens <- as.list(design_params$usage_tokens)

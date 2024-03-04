@@ -15,7 +15,7 @@ summarise_df <- function(df, remove_cols=TRUE, max_cols=10) {
   names(df_prime) <- names(df)
   names(fmts) <- names(df)
   
-  cat_cutoff <- pmax(nrow(df_prime)/10000, 20)
+  cat_cutoff <- 10
   df_stats$type <- sapply(df_prime, function(x){
     cx <- paste(class(x), collapse=", ")
     lux <- length(unique(x))

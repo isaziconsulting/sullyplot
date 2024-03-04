@@ -42,15 +42,15 @@ auto_dash_design <- function(data, summary = NULL, num_plots = 6, custom_descrip
     response <- sullyplot_openai_continue_chat(chat_messages, system_message = system_prompt, model_name = dash_model, max_tokens = 1024, options = list(temperature = temperature))
   }
   
-  plot_info_json <- response$message
+  plot_info_response <- response$message
   total_usage_tokens <- response$usage_tokens
-  all_chat_messages <- data.frame(role = c("user", "assistant"), content = c(user_prompt, plot_info_json))
+  all_chat_messages <- data.frame(role = c("user", "assistant"), content = c(user_prompt, plot_info_response))
   log("Initial dashboard design")
-  log(plot_info_json)
+  log(plot_info_response)
   
   if (num_design_attempts > 0) {
     for(attempt_idx in 1:num_design_attempts) {
-      improve_dashboard_message <- sprintf(improve_dashboard_prompt, num_plots, plot_info_json)
+      improve_dashboard_message <- sprintf(improve_dashboard_prompt, num_plots, plot_info_response)
       chat_messages_new <- rbind(chat_messages, data.frame(role = "user", content = improve_dashboard_message))
       
       if(using_azure) {
@@ -59,16 +59,17 @@ auto_dash_design <- function(data, summary = NULL, num_plots = 6, custom_descrip
         response <- sullyplot_openai_continue_chat(chat_messages_new, system_message = system_prompt, model_name = dash_model, max_tokens = 1024, options = list(temperature = temperature))
       }
       
-      plot_info_json <- response$message
+      plot_info_response <- response$message
       total_usage_tokens <- mapply('+', total_usage_tokens, response$usage_tokens)
-      all_chat_messages <- rbind(all_chat_messages, data.frame(role = c("user", "assistant"), content = c(improve_dashboard_message, plot_info_json)))
+      all_chat_messages <- rbind(all_chat_messages, data.frame(role = c("user", "assistant"), content = c(improve_dashboard_message, plot_info_response)))
       log(sprintf("Improved dashboard design v%d", attempt_idx))
-      log(plot_info_json)
+      log(plot_info_response)
     }
   }
+  plot_info_json <- extract_json_from_response(plot_info_response)
   plot_info_df <- jsonlite::fromJSON(plot_info_json, simplifyDataFrame = FALSE, simplifyMatrix = FALSE)
   if(save_messages) {
-    save_chat_messages(data.frame(role = c("system", "user", "assistant"), content = c(system_prompt, user_prompt, plot_info_json)), sprintf("%s/%s_dash.json", save_dir, save_name))
+    save_chat_messages(data.frame(role = c("system", "user", "assistant"), content = c(system_prompt, user_prompt, plot_info_response)), sprintf("%s/%s_dash.json", save_dir, save_name))
     save_chat_messages(all_chat_messages, sprintf("%s/%s_dash_all.json", save_dir, save_name))
   }
   return(list(plot_info_df = plot_info_df, usage_tokens = total_usage_tokens))

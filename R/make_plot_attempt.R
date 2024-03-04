@@ -1,8 +1,10 @@
-make_plot_attempt <- function(code_string, file_df) {
+make_plot_attempt <- function(code_response, input_df) {
   tryCatch({
-    # First attempt to evaluate the code_string
-    eval(parse(text = code_string))
-    p <- plot_df(file_df)
+    # Extract the R code from the code block
+    plotting_code <- extract_r_code_from_response(code_response)
+    # Attempt to evaluate the code
+    eval(parse(text = plotting_code))
+    p <- plot_df(input_df)
     if (!inherits(p, "ggplot")) {
       if(class(p)[1] == "gtable" || class(p)[1] == "list") {
         stop("The returned object is of class '", class(p)[1], "', not 'ggplot', make sure to use `facet_wrap` for the separate y-axes rather than rendering a group of separate `ggplot` objects.")
@@ -15,7 +17,7 @@ make_plot_attempt <- function(code_string, file_df) {
     low_quality <- is_low_quality_plot(p)
     if(low_quality$status) {
       log(sprintf("Plot was low quality: %s \n", low_quality$message))
-      user_prompt <- sprintf(fix_low_quality_plot_prompt, code_string, low_quality$message)
+      user_prompt <- sprintf(fix_low_quality_plot_prompt, code_response, low_quality$message)
       # A low quality plot can still be plotted if we run out of attempts, so return the plot object
       return(list(success = FALSE, plot_obj = p, new_prompt = user_prompt, error = low_quality$message))
     } else {
@@ -25,9 +27,9 @@ make_plot_attempt <- function(code_string, file_df) {
   },
   error = function(e) {
     # Construct a simplified error message as full traceback is too long to prompt with
-    simplified_error <-   customErrorHandler(e)
+    simplified_error <-   custom_error_handler(e)
     log(sprintf("Plot failed with the error: %s \n", simplified_error))
-    user_prompt <- sprintf(fix_error_prompt, code_string, simplified_error)
+    user_prompt <- sprintf(fix_error_prompt, code_response, simplified_error)
     return(list(success = FALSE, plot_obj = NULL, new_prompt = user_prompt, error = simplified_error))
   })
 }
@@ -51,8 +53,8 @@ test_rendering <- function(plot_obj) {
   })
 }
 
-# Returns a simplified error message without the full traceback
-customErrorHandler <- function(e) {
+# custom_error_handler is a helper to return a simplified error message without the full traceback
+custom_error_handler <- function(e) {
   # Extract the call from the error object
   error_call <- e$call
   

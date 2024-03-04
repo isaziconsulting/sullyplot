@@ -54,10 +54,10 @@ auto_plot <- function(data, plot_columns, plot_description, num_code_attempts=5,
     response <- sullyplot_openai_continue_chat(chat_messages, system_message = system_prompt, model_name = code_model, max_tokens = 512, options = list(temperature = temperature))
   }
 
-  code_string <- response$message
-  log(sprintf("First code attempt:\n%s", code_string))
+  code_response <- response$message
+  log(sprintf("First code attempt:\n%s", code_response))
   total_usage_tokens <- response$usage_tokens
-  all_chat_messages <- data.frame(role = c("user", "assistant"), content = c(code_gen_prompt, code_string))
+  all_chat_messages <- data.frame(role = c("user", "assistant"), content = c(code_gen_prompt, code_response))
 
   # Use a feedback loop to keep re-attempting to code the plot until either the plot is satisfactory or it runs out of attempts
   for (attempt_idx in 1:num_code_attempts) {
@@ -65,11 +65,12 @@ auto_plot <- function(data, plot_columns, plot_description, num_code_attempts=5,
       save_chat_messages(all_chat_messages, sprintf("%s/%s_all.json", save_dir, save_name))
     }
 
-    attempt_results <- make_plot_attempt(code_string, input_df)
+    attempt_results <- make_plot_attempt(code_response, input_df)
     if (attempt_results$success) {
       if (save_messages) {
-        save_chat_messages(data.frame(role = c("system", "user", "assistant"), content = c(system_prompt, code_gen_prompt, code_string)), sprintf("%s/%s.json", save_dir, save_name))
+        save_chat_messages(data.frame(role = c("system", "user", "assistant"), content = c(system_prompt, code_gen_prompt, code_response)), sprintf("%s/%s.json", save_dir, save_name))
       }
+      code_string <- extract_r_code_from_response(code_response)
       return (list(code_string = code_string, plot_obj = attempt_results$plot_obj, usage_tokens = total_usage_tokens))
     } else if (attempt_idx < num_code_attempts) {
       chat_messages <- data.frame(
@@ -88,13 +89,14 @@ auto_plot <- function(data, plot_columns, plot_description, num_code_attempts=5,
         response <- sullyplot_openai_continue_chat(chat_messages, system_message = system_prompt, model_name = code_model, max_tokens = 512, options = list(temperature = temperature))
       }
 
-      code_string <- response$message
-      log(sprintf("Attempt %d code:\n%s", attempt_idx, code_string))
+      code_response <- response$message
+      log(sprintf("Attempt %d code:\n%s", attempt_idx, code_response))
       total_usage_tokens <- mapply('+', total_usage_tokens, response$usage_tokens)
-      all_chat_messages <- rbind(all_chat_messages, data.frame(role = c("user", "assistant"), content = c(attempt_results$new_prompt, code_string)))
+      all_chat_messages <- rbind(all_chat_messages, data.frame(role = c("user", "assistant"), content = c(attempt_results$new_prompt, code_response)))
 
     } else if (!is.null(attempt_results$plot_obj)) {
       # If we're out of attempts but have a non-null plot object then use the plot object
+      code_string <- extract_r_code_from_response(code_response)
       return(list(code_string = code_string, plot_obj = attempt_results$plot_obj, usage_tokens = total_usage_tokens))
     } else {
       stop(sprintf("Ran out of attempts with the error:\n%s", attempt_results$error))

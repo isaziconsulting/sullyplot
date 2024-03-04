@@ -76,3 +76,45 @@ log <- function(message) {
     logger::log_info(logger::skip_formatter(message))
   }
 }
+
+# extract_r_code is a helper to extract just the r code from the LLM response,
+# it expects the code in an R code block (```r your code ```).
+extract_r_code_from_response <- function(input_string) {
+  # Use a regex to find and extract the code block(s)
+  pattern <- "```r([\\s\\S]*?)```"
+  code_string <- stringr::str_extract(input_string, pattern)
+  # If the R code block is not found, stop with an error message
+  if (is.na(code_string)) {
+    stop("R code block not found in the response, please format your response as a fenced R code block (```r your code here ```).")
+  }
+  # Extract the first match and remove the R code block markers
+  code_string <- sub("```r", "", code_string)
+  code_string <- sub("```", "", code_string)
+  # Check the code string is not empty
+  if (trimws(code_string) == "") {
+    stop("R code block does not contain any code.")
+  }
+  
+  return(trimws(code_string))
+}
+
+# extract_json_from_response is a helper to extract just the JSON from the LLM response,
+# it expects the code in a JSON code block (```json your code ```).
+extract_json_from_response <- function(input_string) {
+  # Use a regex to find and extract the code block(s)
+  pattern <- "```json([\\s\\S]*?)```"
+  json_string <- stringr::str_extract(input_string, pattern)
+  # If the R code block is not found, stop with an error message
+  if (is.na(json_string)) {
+    stop("JSON code block not found in the response, please format your response as a fenced JSON code block (```json your JSON here ```).")
+  }
+  # Extract the first match and remove the R code block markers
+  json_string <- sub("```json", "", json_string)
+  json_string <- sub("```", "", json_string)
+  # Check the code string is not empty
+  if (trimws(json_string) == "") {
+    stop("JSON code block does not contain any text")
+  }
+  
+  return(trimws(json_string))
+}

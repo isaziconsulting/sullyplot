@@ -11,7 +11,7 @@ system_prompt <- "You are a data science assistant running an automated data sci
   Here are the available plot types & rules:
     scatter plots - must have only quantitatives on the x and y axes, and an optional 3rd categorical or quantitative column for colour (if you use a quantitative for colour, specify to use a continuous colour scale).
     line plot - must have a DateTime column on the x-axis, a quantitative on the y axis, and an optional 3rd categorical column for colour.
-    box plots - must have a categorical on the x-axis, a quantitative on the y axis, and an optional 3rd categorical or quantitative column for separate y-axes or grouped box plots.
+    box plots - must have a categorical on the x-axis, a quantitative on the y axis, and an optional 3rd categorical or quantitative column for separate y-axes in subplots (with `facet_wrap) or grouped box plots.
     histogram - must have a quantitative on the x-axis in bins, counts on the y axis, and an optional 2nd categorical column for stacked bars, multiple axes, or colour.
     bar chart - must have a categorical on the x-axis and counts on the y axis, and an optional 3rd categorical column for stacked bars or multiple axes.
 "
@@ -97,7 +97,7 @@ Then, where appropriate and not present already, add or improve existing visual 
 - Where relevant according to the DASHBOARD RULES, add categorical columns from the summary if they are logically relevant to show relationships accross different categories, and explain how they should be used.
 - Group related plots together into one plot - e.g. If there are two box/bar plots with the same categories use multiple separate y-axes to plot them as a single `ggplot` - be cautious that you don't include a large number of separate y axes.
 - Add 95%% prediction elipses per category for any scatter plots that have a categorical column for colour.
-- Add lines of best fit with 5%% confidence intervals to line plots, and scatter plots that do not have a categorical column.
+- Add lines of best fit with 5%% confidence intervals to line plots, and scatter plots which don't have categories.
 - Be creative to make the plot more interesting and insightful.
 
 Finally, replace any redundant or highly similar plots with different plots then make sure there are %d plots in total and add new plots if there aren't.
@@ -122,7 +122,7 @@ generate_code_prompt <- "I want to create this plot: %s
       - Draw prediction ellipses with `ggplot2::stat_ellipse` with default asthetics.
       - Always use `theme_grey`
       - When colouring categroicals, use the `Set3` colour palette from `RColorBrewer`.
-      - When colouring continuous numerics, use `colorRampPalette(brewer.pal('Set3', n = 4))` from `RColorBrewer`.
+      - Only when asked for a continuous colour scale, use `scale_colour_gradient(low = 'blue', high = 'red')`.
       - Make the first colour from the `Set3` palette the default plotting colour, including for scatter plots.
       - Continuous numeric ticks must be rounded to 2 decimal places, and numeric x axis ticks must be rotated.
 

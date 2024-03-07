@@ -55,12 +55,20 @@ summarise_df <- function(df, remove_cols=TRUE, max_cols=10) {
     dplyr::sample_n(df_prime, 3)
   }
   
+  # Retrieve the comments for each column in df
+  df_stats$comments <- sapply(names(df), function(column_name){
+    comment <- comment(df[[column_name]])
+    # If there is no comment, return NA
+    if(is.null(comment)) comment <- NA
+    return(comment)
+  })
+  
   # If we have too many cols, filter out free text columns which are useless for EDA in most cases
   if (nrow(df_stats) > max_cols) {
     df_stats <- df_stats[!df_stats$type %in% c("Free Text"), ]
   }
   
-  # If we still have too many cols, teturns the n cols with the least num_na and then most information
+  # If we still have too many cols, return the n cols with the least num_na and then most information
   if (nrow(df_stats) > max_cols) {
     df_stats <- df_stats[order(df_stats$num_na, -df_stats$information), ]
     df_stats <- df_stats[1:max_cols, ]

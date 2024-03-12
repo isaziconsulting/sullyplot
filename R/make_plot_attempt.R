@@ -27,7 +27,7 @@ make_plot_attempt <- function(code_response, input_df) {
   },
   error = function(e) {
     # Construct a simplified error message as full traceback is too long to prompt with
-    simplified_error <-   custom_error_handler(e)
+    simplified_error <-   format_error(e)
     log(sprintf("Plot failed with the error: %s \n", simplified_error))
     user_prompt <- sprintf(fix_error_prompt, code_response, simplified_error)
     return(list(success = FALSE, plot_obj = NULL, new_prompt = user_prompt, error = simplified_error))
@@ -53,24 +53,24 @@ test_rendering <- function(plot_obj) {
   })
 }
 
-# custom_error_handler is a helper to return a simplified error message without the full traceback
-custom_error_handler <- function(e) {
+# format_error is a helper to return a simplified error message without the full traceback
+format_error <- function(e) {
   # Extract the call from the error object
   error_call <- e$call
-  
+
   # Get the function name
-  func_name <- as.character(error_call[[1]])
-  
+  func_name <- deparse(error_call[[1]])
+
   # Extract the error message
   error_message <- e$message
-  
+
   # Get the arguments passed to the function
   args_passed <- sapply(error_call[-1], deparse)
-  
+
   # Construct a simplified error message
   simplified_error <- paste("Error in function:", func_name, "\nArguments:", 
                             paste(names(args_passed), args_passed, sep = "=", collapse = ", "),
                             "\nMessage:", error_message)
-  
-  return(simplified_error)
+
+  simplified_error
 }

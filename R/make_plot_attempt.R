@@ -15,7 +15,7 @@ make_plot_attempt <- function(code_response, input_df) {
     test_rendering(p)
     # Assess if plot is low quality
     low_quality <- is_low_quality_plot(p)
-    if(low_quality$status) {
+    if (low_quality$status) {
       log(sprintf("Plot was low quality: %s \n", low_quality$message))
       user_prompt <- sprintf(fix_low_quality_plot_prompt, code_response, low_quality$message)
       # A low quality plot can still be plotted if we run out of attempts, so return the plot object

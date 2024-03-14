@@ -111,8 +111,13 @@ Your previous response was:
 generate_code_prompt <- "I want to create this plot: %s
     Please provide a function in R called 'plot_df' that takes a dataframe 'df' as its argument, processes it, and then directly returns a `ggplot` object.
     The function must perform preprocessing, data transformation, statistical analyses, and plotting.
-    Preprocessing includes converting numeric variables to factors with `as.factor()` when used categorically.
-    Only if the plot specifically states to use separate y-axes, use `facet_wrap` to show them.
+    Preprocessing includes:
+      - Converting numeric variables to factors with `as.factor()` when used categorically.
+      - Outlier detection and treatment.
+      - Downsampling input data to 1000 rows for scatter plots when count > 1000 (use strategic downsampling if there is a category).
+      - Encoding datetime variables appropriately for line plots.
+      - Creating derived variables when necessary, such as computing aggregates, differences, or ratios that may be more informative for the plot.
+      - Handling missing values by imputation or removal, depending on the amount and nature of the missing data.
 
     *** STYLING RULES ***
       - Box plots should always be coloured by category.

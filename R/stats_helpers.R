@@ -28,6 +28,7 @@ summarise_df <- function(df, remove_cols=TRUE, max_cols=10) {
   df_stats$format <- fmts
   
   df_stats$num_na <- sapply(df_prime, function(x)sum(is.na(x)))
+  df_stats$count <- nrow(df_prime)
   df_stats$n_distinct <- sapply(df_prime, dplyr::n_distinct)
   df_stats$levels <- sapply(df_prime, function(x){
                                         if(dplyr::n_distinct(x) <= cat_cutoff)return(paste(as.character(unique(x)), collapse=", "))

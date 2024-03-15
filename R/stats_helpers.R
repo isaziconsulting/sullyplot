@@ -14,7 +14,6 @@ summarise_df <- function(df, remove_cols=TRUE, max_cols=10) {
   # Use original names
   names(df_prime) <- names(df)
   names(fmts) <- names(df)
-  
   cat_cutoff <- 10
   df_stats$type <- sapply(df_prime, function(x){
     cx <- paste(class(x), collapse=", ")
@@ -26,7 +25,6 @@ summarise_df <- function(df, remove_cols=TRUE, max_cols=10) {
     return(cx)
   })
   df_stats$format <- fmts
-  
   df_stats$num_na <- sapply(df_prime, function(x)sum(is.na(x)))
   df_stats$count <- nrow(df_prime)
   df_stats$n_distinct <- sapply(df_prime, dplyr::n_distinct)
@@ -34,28 +32,23 @@ summarise_df <- function(df, remove_cols=TRUE, max_cols=10) {
                                         if(dplyr::n_distinct(x) <= cat_cutoff)return(paste(as.character(unique(x)), collapse=", "))
                                         return("")
                                       })
-  df_stats$quantile_stats <- lapply(names(df_prime), 
+  df_stats$quantile_stats <- lapply(names(df_prime),
                       function(x){
                         sx <- sort(df_prime[[x]])
                         n <- nrow(df_prime)
                         data.frame(
-                          # min             = sx[1] %>% as.character(),
                           first_quartile  = sx[ceiling(n/4)] %>% as.character(),
                           median          = sx[ceiling(n/2)] %>% as.character(),
                           third_quartile  = sx[ceiling(3 * n/4)] %>% as.character()
-                          # max             = sx[n] %>% as.character()
                         )
                       })
-  
   df_stats <- df_stats %>% tidyr::unnest(quantile_stats)
   df_stats$information <- sapply(df_prime, score_vector_information)
-  
   samples <- if(nrow(df_prime) < 3){
     dplyr::sample_n(df_prime, 3, replace = TRUE)
   }else{
     dplyr::sample_n(df_prime, 3)
   }
-  
   # Retrieve the comments for each column in df
   df_stats$comments <- sapply(names(df), function(column_name){
     comment <- comment(df[[column_name]])
@@ -63,12 +56,10 @@ summarise_df <- function(df, remove_cols=TRUE, max_cols=10) {
     if(is.null(comment)) comment <- NA
     return(comment)
   })
-  
   # If we have too many cols, filter out free text columns which are useless for EDA in most cases
   if (nrow(df_stats) > max_cols) {
     df_stats <- df_stats[!df_stats$type %in% c("Free Text"), ]
   }
-  
   # If we still have too many cols, return the n cols with the least num_na and then most information
   if (nrow(df_stats) > max_cols) {
     df_stats <- df_stats[order(df_stats$num_na, -df_stats$information), ]
@@ -94,11 +85,9 @@ mi_matrix <- function(df) {
     if (ncol(numeric_columns) < 2) {
       return("")
     }
-    
     # Initialize an empty matrix to store mutual information values
     mi_values <- matrix(NA, ncol(numeric_columns), ncol(numeric_columns),
                         dimnames = list(colnames(numeric_columns), colnames(numeric_columns)))
-    
     # Calculate mutual information for every pair of numeric columns
     for(i in 1:ncol(numeric_columns)) {
       for(j in 1:ncol(numeric_columns)) {
@@ -110,10 +99,8 @@ mi_matrix <- function(df) {
         }
       }
     }
-    
     # Format the matrix as a string
     mi_matrix_string <- capture.output(print(mi_values))
-    
     # Collapse the string vector into a single string
     mi_matrix_string <- paste(mi_matrix_string, collapse = "\n")
     return(mi_matrix_string)
@@ -125,7 +112,7 @@ mi_matrix <- function(df) {
 
 #' significant_categorical_relationships
 #' Uses a chi squared test to summarise significant categorical to categorical relationships in the input df.
-#' 
+#'
 #' @param df - the data frame to be analysed
 #' @param summary_df - a summary of `df` generated using `summarise_df`
 #' @param significance_level - the significance level above which relationships will discarded.
@@ -136,19 +123,20 @@ significant_categorical_relationships <- function(df, summary_df, significance_l
   log("Computing chi squared test")
   tryCatch({
     cat_cols <- unique(summary_df$name[summary_df$type %in% c("Categorical", "Large Categorical")])
+    setDT(df)  # Convert df to a data.table in-place for efficiency
     if (length(cat_cols) < 2) {
       return("None.")
     }
     significant_relationships <- character()
-    
+
     for (i in 1:(length(cat_cols) - 1)) {
       for (j in (i + 1):length(cat_cols)) {
         contingency_table <- table(df[[cat_cols[i]]], df[[cat_cols[j]]])
+
+        # Optimize for 2x2 tables with Fisher's test and larger tables with chi-squared
         if (all(dim(contingency_table) == 2)) {
-          # Use Fisher's Exact Test for 2x2 tables
           test <- fisher.test(contingency_table)
         } else {
-          # Use Chi-squared test with simulated p-value for larger tables
           test <- chisq.test(contingency_table, simulate.p.value = TRUE, B = 2000)
         }
         
@@ -173,40 +161,39 @@ significant_categorical_relationships <- function(df, summary_df, significance_l
 #' significant_categorical_numeric_relationships
 #' Uses an ANOVA test (or just a t-test if there are two levels) to summarise all significant relationships
 #' between categorical and numeric variables.
-#' 
+#'
 #' @param df - the data frame to be analysed
 #' @param summary_df - a summary of `df` generated using `summarise_df`
 #' @param significance_level - the significance level above which relationships will discarded.
-#' 
+#'
 #' @return Returns a string summarising significant categorical to numeric relationships and their p values
 #' which can be directly used in prompting.
 significant_categorical_numeric_relationships <- function(df, summary_df, significance_level = 0.05) {
   log("Computing ANOVA test")
   tryCatch({
+    setDT(df)  # Convert df to a data.table in-place for efficiency
     results <- c()
-    for(cat_col in summary_df$name[summary_df$type %in% c("Categorical", "Large Categorical")]) {
+    cat_cols <- summary_df$name[summary_df$type %in% c("Categorical", "Large Categorical")]
+    for(cat_col in cat_cols) {
       for(num_col in names(df)[sapply(df, is.numeric)]) {
         if(!(num_col %in% summary_df$name[summary_df$type %in% c("Categorical", "Large Categorical")])) {
           levels <- length(unique(df[[cat_col]]))
-          
           # If only two levels, use t-test
-          if(levels < 3) {
+          if (levels < 3) {
             t_test_result <- t.test(df[[num_col]] ~ df[[cat_col]], data = df)
             p_value <- t_test_result$p.value
           } else { # If more than two levels, use ANOVA
             anova_result <- aov(df[[num_col]] ~ df[[cat_col]], data = df)
             p_value <- summary(anova_result)[[1]]$"Pr(>F)"[1]
           }
-          
           # Check for significance
-          if(p_value < significance_level) {
+          if (p_value < significance_level) {
             result <- sprintf("%s, %s, %.2e", cat_col, num_col, p_value)
             results <- c(results, result)
           }
         }
       }
     }
-    
     significant_relationships <- paste(results, collapse = "\n")
     if (nchar(significant_relationships) == 0) {
       return("None.")

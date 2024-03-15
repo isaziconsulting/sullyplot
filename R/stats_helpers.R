@@ -80,12 +80,13 @@ summarise_df <- function(df, remove_cols=TRUE, max_cols=10) {
 
 #' mi_matrix
 #' Makes a mutual information matrix from the numeric columns in the input df.
-#' 
+#'
 #' @param df - the data frame to be analysed
-#' 
+#'
 #' @return A string representation of the the mutual information matrix of all numeric columns in the input df
 #' which can be directly used for prompting.
 mi_matrix <- function(df) {
+  log("Computing mutual information matrix")
   tryCatch({
     # Select numeric columns ignoring columns with less than 20 unique values
     numeric_columns <- df %>% 
@@ -115,11 +116,10 @@ mi_matrix <- function(df) {
     
     # Collapse the string vector into a single string
     mi_matrix_string <- paste(mi_matrix_string, collapse = "\n")
-    
     return(mi_matrix_string)
   }, error = function(e) {
     warning(sprintf("MI matrix computation failed: %s", e$message))
-    return("")
+    return("None")
   })
 }
 
@@ -133,6 +133,7 @@ mi_matrix <- function(df) {
 #' @return Returns a string summarising significant categorical to categorical relationships and their p values
 #' which can be directly used in prompting.
 significant_categorical_relationships <- function(df, summary_df, significance_level = 0.05) {
+  log("Computing chi squared test")
   tryCatch({
     cat_cols <- unique(summary_df$name[summary_df$type %in% c("Categorical", "Large Categorical")])
     if (length(cat_cols) < 2) {
@@ -180,6 +181,7 @@ significant_categorical_relationships <- function(df, summary_df, significance_l
 #' @return Returns a string summarising significant categorical to numeric relationships and their p values
 #' which can be directly used in prompting.
 significant_categorical_numeric_relationships <- function(df, summary_df, significance_level = 0.05) {
+  log("Computing ANOVA test")
   tryCatch({
     results <- c()
     for(cat_col in summary_df$name[summary_df$type %in% c("Categorical", "Large Categorical")]) {

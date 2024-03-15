@@ -14,14 +14,14 @@ summarise_df <- function(df, remove_cols=TRUE, max_cols=10) {
   # Use original names
   names(df_prime) <- names(df)
   names(fmts) <- names(df)
-  cat_cutoff <- 10
+  cat_cutoff <- 20
   df_stats$type <- sapply(df_prime, function(x){
-    cx <- paste(class(x), collapse=", ")
+    cx <- paste(class(x), collapse = ", ")
     lux <- length(unique(x))
-    if(lux <= cat_cutoff)return("Categorical")
-    if(lux < length(x) / 10)return("Large Categorical")
-    if(cx == "character")return("Free Text")
-    if(stringr::str_detect(cx, "POSIX"))return("DateTime")
+    if (lux <= cat_cutoff) return("Categorical")
+    if (lux < length(x) / 10) return("Large Categorical")
+    if (cx == "character") return("Free Text")
+    if (stringr::str_detect(cx, "POSIX")) return("DateTime")
     return(cx)
   })
   df_stats$format <- fmts
@@ -57,11 +57,11 @@ summarise_df <- function(df, remove_cols=TRUE, max_cols=10) {
     return(comment)
   })
   # If we have too many cols, filter out free text columns which are useless for EDA in most cases
-  if (nrow(df_stats) > max_cols) {
-    df_stats <- df_stats[!df_stats$type %in% c("Free Text"), ]
+  if (remove_cols && nrow(df_stats) > max_cols) {
+    df_stats <- df_stats[df_stats$type != "Free Text", ]
   }
   # If we still have too many cols, return the n cols with the least num_na and then most information
-  if (nrow(df_stats) > max_cols) {
+  if (remove_cols && nrow(df_stats) > max_cols) {
     df_stats <- df_stats[order(df_stats$num_na, -df_stats$information), ]
     df_stats <- df_stats[1:max_cols, ]
   }
@@ -122,16 +122,23 @@ mi_matrix <- function(df) {
 significant_categorical_relationships <- function(df, summary_df, significance_level = 0.05) {
   log("Computing chi squared test")
   tryCatch({
-    cat_cols <- unique(summary_df$name[summary_df$type %in% c("Categorical", "Large Categorical")])
-    setDT(df)  # Convert df to a data.table in-place for efficiency
-    if (length(cat_cols) < 2) {
+    # Only compare normal categoricals to normal and large categoricals
+    # But never large categoricals to each other as this is way too slow
+    cat_cols <- unique(summary_df$name[summary_df$type == "Categorical"])
+    all_cat_cols <- unique(summary_df$name[summary_df$type %in% c("Categorical", "Large Categorical")])
+    if (length(all_cat_cols) < 2 || length(cat_cols) < 1) {
       return("None.")
     }
     significant_relationships <- character()
 
-    for (i in 1:(length(cat_cols) - 1)) {
-      for (j in (i + 1):length(cat_cols)) {
-        contingency_table <- table(df[[cat_cols[i]]], df[[cat_cols[j]]])
+    for (i in seq_along(all_cat_cols)) {
+      for (j in seq_along(cat_cols)) {
+        # Skip if comparing the same column
+        if (all_cat_cols[i] == cat_cols[j]) {
+          next
+        }
+
+        contingency_table <- table(df[[all_cat_cols[i]]], df[[cat_cols[j]]])
 
         # Optimize for 2x2 tables with Fisher's test and larger tables with chi-squared
         if (all(dim(contingency_table) == 2)) {
@@ -141,16 +148,16 @@ significant_categorical_relationships <- function(df, summary_df, significance_l
         }
         
         if (!is.na(test$p.value) && test$p.value < significance_level) {
-          significant_relationships <- c(significant_relationships, 
-                                         paste(cat_cols[i], cat_cols[j], test$p.value, sep = ", "))
+          significant_relationships <- c(significant_relationships,
+                                         paste(all_cat_cols[i], cat_cols[j], test$p.value, sep = ", "))
         }
       }
     }
-    significant_relationships_str <- cat(paste(significant_relationships, collapse = "\n"))
-    if (is.null(significant_relationships_str)) {
+
+    if (length(significant_relationships) == 0) {
       return("None.")
     } else {
-      return(trimws(significant_relationships_str))
+      return(paste(significant_relationships, collapse = "\n"))
     }
   }, error = function(e) {
     warning(sprintf("Signficant categoricals computation failed: %s", e$message))
@@ -171,34 +178,32 @@ significant_categorical_relationships <- function(df, summary_df, significance_l
 significant_categorical_numeric_relationships <- function(df, summary_df, significance_level = 0.05) {
   log("Computing ANOVA test")
   tryCatch({
-    setDT(df)  # Convert df to a data.table in-place for efficiency
     results <- c()
-    cat_cols <- summary_df$name[summary_df$type %in% c("Categorical", "Large Categorical")]
-    for(cat_col in cat_cols) {
-      for(num_col in names(df)[sapply(df, is.numeric)]) {
-        if(!(num_col %in% summary_df$name[summary_df$type %in% c("Categorical", "Large Categorical")])) {
-          levels <- length(unique(df[[cat_col]]))
-          # If only two levels, use t-test
-          if (levels < 3) {
-            t_test_result <- t.test(df[[num_col]] ~ df[[cat_col]], data = df)
-            p_value <- t_test_result$p.value
-          } else { # If more than two levels, use ANOVA
-            anova_result <- aov(df[[num_col]] ~ df[[cat_col]], data = df)
-            p_value <- summary(anova_result)[[1]]$"Pr(>F)"[1]
-          }
-          # Check for significance
-          if (p_value < significance_level) {
-            result <- sprintf("%s, %s, %.2e", cat_col, num_col, p_value)
-            results <- c(results, result)
-          }
+    cat_cols <- summary_df$name[summary_df$type == "Categorical"]
+    num_cols <- summary_df$name[summary_df$type == "numeric"]
+    for (cat_col in cat_cols) {
+      for (num_col in num_cols) {
+        levels <- length(unique(df[[cat_col]]))
+        # If only two levels, use t-test
+        if (levels < 3) {
+          t_test_result <- t.test(df[[num_col]] ~ df[[cat_col]], data = df)
+          p_value <- t_test_result$p.value
+        } else { # If more than two levels, use ANOVA
+          anova_result <- aov(df[[num_col]] ~ df[[cat_col]], data = df)
+          p_value <- summary(anova_result)[[1]]$"Pr(>F)"[1]
+        }
+        # Check for significance
+        if (p_value < significance_level) {
+          result <- sprintf("%s, %s, %.2e", cat_col, num_col, p_value)
+          results <- c(results, result)
         }
       }
     }
-    significant_relationships <- paste(results, collapse = "\n")
-    if (nchar(significant_relationships) == 0) {
+
+    if (length(results) == 0) {
       return("None.")
     } else {
-      return(trimws(significant_relationships))
+      return(paste(results, collapse = "\n"))
     }
   }, error = function(e) {
     warning(sprintf("Signficant categorical to numerical computation failed: %s", e$message))
@@ -259,7 +264,7 @@ autoconvert_dataframe <- function(df, exclusions = NULL){
   }
   formats[coltypes == "numeric"] <- "standard_numeric"
   formats[coltypes == "integer"] <- "standard_integer"
-  
+
   cat("Done.\n")
   return(list(df=df, formats = unlist(formats)))
 }

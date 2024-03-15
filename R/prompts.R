@@ -113,9 +113,7 @@ generate_code_prompt <- "I want to create this plot: %s
     The function must perform preprocessing, data transformation, statistical analyses, and plotting.
     Preprocessing includes:
       - Converting numeric variables to factors with `as.factor()` when used categorically.
-      - Outlier detection and treatment.
-      - Downsampling input data to 1000 rows for scatter plots when count > 1000 (use strategic downsampling if there is a category).
-      - Encoding datetime variables appropriately for line plots.
+      - For scatter, box and line plots, removing outliers and downsampling remaining data to 1000 rows when count > 1000 (use strategic downsampling if there is a category).
       - Creating derived variables when necessary, such as computing aggregates, differences, or ratios that may be more informative for the plot.
       - Handling missing values by imputation or removal, depending on the amount and nature of the missing data.
 
@@ -126,20 +124,21 @@ generate_code_prompt <- "I want to create this plot: %s
       - Use `facet_wrap` when separate y-axes are specified.
       - Draw prediction ellipses with `ggplot2::stat_ellipse` with default asthetics.
       - Always use `theme_grey`
-      - When colouring categroicals, use the `Set3` colour palette from `RColorBrewer`.
+      - When colouring categoricals, use the `Set3` colour palette from `RColorBrewer`.
       - Only when asked for a continuous colour scale, use `scale_colour_gradient(low = 'blue', high = 'red')`.
       - Make the first colour from the `Set3` palette the default plotting colour, including for scatter plots.
-      - Continuous numeric ticks must be rounded to 2 decimal places, and numeric x axis ticks must be rotated.
+      - Continuous numeric ticks must be rounded to 2 decimal places
+      - X axis ticks must be rotated.
 
     *** OUTPUT RULES ***
-      - The response should consist of only the R code for the `plot_df` function, formatted as a fenced R code block, like so:
+      - The response should consist of only the R code for the `plot_df` function without comments, formatted as a fenced R code block, like so:
       ```r
         plot_df <- function(df) { your code here }
       ```
-      - Include library requirements with require() statements.
+      - Include library requirements in the function code with require() statements.
       - The `plot_df` function must return only a `ggplot` object.
       - All plots must have a concise title and axes must be labelled.
-      - DO NOT include comments in the code.
+      - DO NOT include comments in the code ever.
 
     Here is a summary of the columns in the input data frame df:
     %s"

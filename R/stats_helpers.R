@@ -14,24 +14,28 @@ summarise_df <- function(df, remove_cols=TRUE, max_cols=10) {
   # Use original names
   names(df_prime) <- names(df)
   names(fmts) <- names(df)
+  # Detect type
   cat_cutoff <- 20
   df_stats$type <- sapply(df_prime, function(x){
     cx <- paste(class(x), collapse = ", ")
     lux <- length(unique(x))
-    if (lux <= cat_cutoff) return("Categorical")
-    if (lux < length(x) / 10) return("Large Categorical")
+    if (cx %in% c("character", "integer") && lux <= cat_cutoff) return("Categorical")
+    if (cx == "character" & lux < length(x) / 10) return("Large Categorical")
     if (cx == "character") return("Free Text")
     if (stringr::str_detect(cx, "POSIX")) return("DateTime")
     return(cx)
   })
+  # Misc
   df_stats$format <- fmts
   df_stats$num_na <- sapply(df_prime, function(x)sum(is.na(x)))
   df_stats$count <- nrow(df_prime)
   df_stats$n_distinct <- sapply(df_prime, dplyr::n_distinct)
+  # Category values (don't show all these for large categoricals as it will be way too many)
   df_stats$levels <- sapply(df_prime, function(x){
                                         if(dplyr::n_distinct(x) <= cat_cutoff)return(paste(as.character(unique(x)), collapse=", "))
                                         return("")
                                       })
+  # Quantile states (Q1, median, Q3)
   df_stats$quantile_stats <- lapply(names(df_prime),
                       function(x){
                         sx <- sort(df_prime[[x]])
@@ -43,12 +47,9 @@ summarise_df <- function(df, remove_cols=TRUE, max_cols=10) {
                         )
                       })
   df_stats <- df_stats %>% tidyr::unnest(quantile_stats)
+  # Information score (entropy measure)
   df_stats$information <- sapply(df_prime, score_vector_information)
-  samples <- if(nrow(df_prime) < 3){
-    dplyr::sample_n(df_prime, 3, replace = TRUE)
-  }else{
-    dplyr::sample_n(df_prime, 3)
-  }
+
   # Retrieve the comments for each column in df
   df_stats$comments <- sapply(names(df), function(column_name){
     comment <- comment(df[[column_name]])
@@ -79,9 +80,9 @@ summarise_df <- function(df, remove_cols=TRUE, max_cols=10) {
 mi_matrix <- function(df) {
   log("Computing mutual information matrix")
   tryCatch({
-    # Select numeric columns ignoring columns with less than 20 unique values
+    # Select numeric columns with more than 20 unique values
     numeric_columns <- df %>% 
-      dplyr::select(where(~is.numeric(.x) && length(unique(.x)) >= 20))
+      dplyr::select(where(~is.numeric(.x) && length(unique(.x)) > 20))
     if (ncol(numeric_columns) < 2) {
       return("")
     }
@@ -180,7 +181,7 @@ significant_categorical_numeric_relationships <- function(df, summary_df, signif
   tryCatch({
     results <- c()
     cat_cols <- summary_df$name[summary_df$type == "Categorical"]
-    num_cols <- summary_df$name[summary_df$type == "numeric"]
+    num_cols <- summary_df$name[summary_df$type %in% c("numeric", "integer")]
     for (cat_col in cat_cols) {
       for (num_col in num_cols) {
         levels <- length(unique(df[[cat_col]]))

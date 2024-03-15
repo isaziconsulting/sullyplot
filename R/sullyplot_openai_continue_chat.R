@@ -68,7 +68,7 @@ sullyplot_openai_continue_chat <- function(chat_messages, system_message = NULL,
   }
   
   if(parsed_response$choices$finish_reason != "stop"){
-    warning(paste("AI Chat completion did not complete entirely - stop reason is ", parsed_response$choices$finish_reason))
+    stop(paste("AI Chat completion did not complete entirely - stop reason is ", parsed_response$choices$finish_reason))
   }
   
   # Extract the response message from the response

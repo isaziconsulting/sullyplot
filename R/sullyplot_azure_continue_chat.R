@@ -18,42 +18,42 @@ sullyplot_azure_continue_chat <- function(chat_messages, system_message = NULL, 
   if (openai_api_key == "") {
     stop("You need to set the OPENAI_API_KEY environment variable!")
   }
-  
+
   if (!is_azure_openai_configured()) {
-    warning("AZURE_RESOURCE_NAME has not been set, defaulting to OpenAI API Chat Completion endpoint")
+    log("AZURE_RESOURCE_NAME has not been set, defaulting to OpenAI API Chat Completion endpoint")
     # OpenAI API uses GPT-3.5-turbo instead of GPT-35-turbo
     model_name <- gsub("35", "3.5", deployment_id)
     return(sullyplot_openai_continue_chat(chat_messages, system_message, model_name, max_tokens, options))
   }
   azure_resource_name	 <- Sys.getenv("AZURE_RESOURCE_NAME")
-  
+
   chat_messages <- apply(chat_messages, 1, as.list)
-  
+
   # Initialize the list of messages with the system message, if provided
   messages <- list()
   if (!is.null(system_message)) {
     messages <- append(messages, list(list("role" = "system", "content" = system_message)))
   }
-  
+
   # Append the chat messages to the list of messages
   messages <- append(messages, chat_messages)
-  
+
   # Set default values for options and override with user-specified options
   default_options <- list(
     temperature = 0.5
   )
   if(is.null(options))options <- list()
   options <- utils::modifyList(default_options, options)
-  
+
   # Create a JSON object with the messages and options
   json_data <- list(
     messages = messages,
     max_tokens = max_tokens
   )
   json_data <- utils::modifyList(json_data, options) # Add options to the JSON object
-  
+
   api_url = sprintf("https://%s.openai.azure.com/openai/deployments/%s/chat/completions?api-version=%s", azure_resource_name, deployment_id, api_version)
-  
+
   # Call the API with exponential back-off
   response <- httr::RETRY(
     "POST",
@@ -72,24 +72,24 @@ sullyplot_azure_continue_chat <- function(chat_messages, system_message = NULL, 
     verbose = 1, # Verbosity level
     terminate_on = c(400, 401, 404)
   )
-  
+
   parsed_response <- jsonlite::fromJSON(httr::content(response, "text", encoding = "UTF-8"))
   if ("error" %in% names(parsed_response)) {
     stop("Azure OpenAI Error: ", parsed_response$error$message, " (", parsed_response$error$type, ")")
   }
-  
+
   if(parsed_response$choices$finish_reason != "stop"){
-    warning(paste("AI Chat completion did not complete entirely - stop reason is ", parsed_response$choices$finish_reason))
+    stop(paste("AI Chat completion did not complete entirely - stop reason is ", parsed_response$choices$finish_reason))
   }
-  
+
   # Extract the response message from the response
   response_message <- parsed_response$choices$message$content[[1]]
-  
+
   # Also return tokens for collecting usage statistics
   prompt_tokens <- parsed_response$usage$prompt_tokens[[1]]
   completion_tokens <- parsed_response$usage$completion_tokens[[1]]
   usage_tokens <- list(prompt_tokens=prompt_tokens, completion_tokens=completion_tokens)
-  
+
   return(list(message=response_message, usage_tokens=usage_tokens))
 }
 

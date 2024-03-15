@@ -20,12 +20,14 @@
 #'
 #' @export
 auto_dash_design <- function(data, summary = NULL, num_plots = 6, custom_description="", dash_model="gpt-4", temperature=0.1, num_design_attempts=2, max_cols=10, save_messages=TRUE, save_dir="sullyplot_messages", save_name="auto_dash") {
+  log("Summarising input data")
   input_df <- read_data(data)
   if(is.null(summary)) {
     summary <- summarise_df(input_df, max_cols = max_cols)
   }
   using_azure <- is_azure_openai_configured()
-  
+
+  log(sprintf("Designing dashboard (model = %s)", dash_model))
   # Get GPT to design and describe the overall dashboard, use the custom description if available
   if(custom_description == "") {
     user_prompt <- sprintf(describe_dashboard_prompt, num_plots, to_csv(summary), mi_matrix(input_df), significant_categorical_relationships(input_df, summary), significant_categorical_numeric_relationships(input_df, summary))

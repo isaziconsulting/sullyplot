@@ -49,7 +49,7 @@ auto_dash <- function(data, num_plots = 6, custom_description="", dash_model="gp
   plot_info_df <- design_params$plot_info_df
   usage_tokens <- as.list(design_params$usage_tokens)
   log(sprintf("Dashboard design completed using %d prompt tokens and %d completion tokens", usage_tokens$prompt_tokens, usage_tokens$completion_tokens))
-  
+
   # Start coding the dashboard
   all_plots <- lapply(seq_along(plot_info_df$input_columns), function(idx) {
     log(sprintf("\nGenerating plot %d using the columns: %s", idx, paste(plot_info_df$input_columns[[idx]], collapse = ", ")))

@@ -222,7 +222,7 @@ significant_categorical_numeric_relationships <- function(df, summary_df, signif
 score_vector_information <- function(vec) 
 {
   if (length(na.omit(vec)) == 0) {
-    return(NA)
+    return(0)
   }
   histvec <- table(vec, useNA = "ifany")
   p = histvec/sum(histvec)

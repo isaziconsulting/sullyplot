@@ -35,6 +35,11 @@ sullyplot_openai_continue_chat <- function(chat_messages, system_message = NULL,
   if(is.null(options))options <- list()
   options <- utils::modifyList(default_options, options)
   
+  # Remove temperature from options if not supported
+  if (!(model_name %in% temperature_models)) {
+    options$temperature <- NULL
+  }
+
   # Create a JSON object with the messages and options
   json_data <- list(
     messages = messages,

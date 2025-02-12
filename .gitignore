@@ -4,3 +4,4 @@
 /.Renviron
 *.json
 *.pdf
+.Rproj.user

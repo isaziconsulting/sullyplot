@@ -13,7 +13,7 @@
 #' @return The response message as well as the amount of prompt and completion tokens used.
 #'
 #' @export
-sullyplot_azure_continue_chat <- function(chat_messages, system_message = NULL, deployment_id = "gpt-4", api_version = "2023-05-15", max_tokens = 150, options = list()) {
+sullyplot_azure_continue_chat <- function(chat_messages, system_message = NULL, deployment_id = "gpt-4", api_version = "2023-05-15", max_tokens = 16384, options = list()) {
   openai_api_key <- Sys.getenv("OPENAI_API_KEY")
   if (openai_api_key == "") {
     stop("You need to set the OPENAI_API_KEY environment variable!")
@@ -48,7 +48,7 @@ sullyplot_azure_continue_chat <- function(chat_messages, system_message = NULL, 
   # Create a JSON object with the messages and options
   json_data <- list(
     messages = messages,
-    max_tokens = max_tokens
+    max_completion_tokens = max_tokens
   )
   json_data <- utils::modifyList(json_data, options) # Add options to the JSON object
 

@@ -19,7 +19,7 @@
 #' @return A dataframe consisting of the columns input_columns - a list of lists of the input columns necessary for each plot; descriptions - a list of descriptions of each plot; and usage_tokens - the total number prompt and completion tokens used.
 #'
 #' @export
-auto_dash_design <- function(data, summary = NULL, num_plots = 6, custom_description="", dash_model="gpt-4", temperature=0.1, num_design_attempts=2, max_cols=10, save_messages=TRUE, save_dir="sullyplot_messages", save_name="auto_dash") {
+auto_dash_design <- function(data, summary = NULL, num_plots = 6, custom_description="", dash_model="gpt-4", temperature=0.1, num_design_attempts=2, max_cols=10, save_messages=TRUE, save_dir="sullyplot_messages", save_name="auto_dash", max_tokens=16384) {
   log("Summarising input data")
   input_df <- read_data(data)
   if(is.null(summary)) {
@@ -39,9 +39,9 @@ auto_dash_design <- function(data, summary = NULL, num_plots = 6, custom_descrip
   all_chat_messages <- chat_messages
   
   if(using_azure) {
-    response <- sullyplot_azure_continue_chat(chat_messages, system_message = system_prompt, deployment_id = dash_model, max_tokens = 1024, options = list(temperature = temperature))
+    response <- sullyplot_azure_continue_chat(chat_messages, system_message = system_prompt, deployment_id = dash_model, max_tokens = max_tokens, options = list(temperature = temperature))
   } else {
-    response <- sullyplot_openai_continue_chat(chat_messages, system_message = system_prompt, model_name = dash_model, max_tokens = 1024, options = list(temperature = temperature))
+    response <- sullyplot_openai_continue_chat(chat_messages, system_message = system_prompt, model_name = dash_model, max_tokens = max_tokens, options = list(temperature = temperature))
   }
   
   plot_info_response <- response$message
@@ -56,9 +56,9 @@ auto_dash_design <- function(data, summary = NULL, num_plots = 6, custom_descrip
       chat_messages_new <- rbind(chat_messages, data.frame(role = "user", content = improve_dashboard_message))
       
       if(using_azure) {
-        response <- sullyplot_azure_continue_chat(chat_messages_new, system_message = system_prompt, deployment_id = dash_model, max_tokens = 1024, options = list(temperature = temperature))
+        response <- sullyplot_azure_continue_chat(chat_messages_new, system_message = system_prompt, deployment_id = dash_model, max_tokens = max_tokens, options = list(temperature = temperature))
       } else {
-        response <- sullyplot_openai_continue_chat(chat_messages_new, system_message = system_prompt, model_name = dash_model, max_tokens = 1024, options = list(temperature = temperature))
+        response <- sullyplot_openai_continue_chat(chat_messages_new, system_message = system_prompt, model_name = dash_model, max_tokens = max_tokens, options = list(temperature = temperature))
       }
       
       plot_info_response <- response$message

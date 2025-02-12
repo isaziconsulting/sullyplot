@@ -33,7 +33,7 @@
 #'
 #'
 #' @export
-auto_plot <- function(data, plot_columns, plot_description, num_code_attempts=5, code_model="gpt-4", save_messages=FALSE, save_dir="", save_name="auto_plot") {
+auto_plot <- function(data, plot_columns, plot_description, num_code_attempts=5, code_model="gpt-4", save_messages=FALSE, save_dir="", save_name="auto_plot", max_tokens=16384) {
   temperature <- 0
   input_df <- read_data(data)
   using_azure <- is_azure_openai_configured()
@@ -50,9 +50,9 @@ auto_plot <- function(data, plot_columns, plot_description, num_code_attempts=5,
 
   # Make an initial attempt at coding the plot
   if(using_azure) {
-    response <- sullyplot_azure_continue_chat(chat_messages, system_message = system_prompt, deployment_id = code_model, max_tokens = 512, options = list(temperature = temperature))
+    response <- sullyplot_azure_continue_chat(chat_messages, system_message = system_prompt, deployment_id = code_model, max_tokens = max_tokens, options = list(temperature = temperature))
   } else {
-    response <- sullyplot_openai_continue_chat(chat_messages, system_message = system_prompt, model_name = code_model, max_tokens = 512, options = list(temperature = temperature))
+    response <- sullyplot_openai_continue_chat(chat_messages, system_message = system_prompt, model_name = code_model, max_tokens = max_tokens, options = list(temperature = temperature))
   }
 
   code_response <- response$message
@@ -85,9 +85,9 @@ auto_plot <- function(data, plot_columns, plot_description, num_code_attempts=5,
       }
 
       if (using_azure) {
-        response <- sullyplot_azure_continue_chat(chat_messages, system_message = system_prompt, deployment_id = code_model, max_tokens = 512, options = list(temperature = temperature))
+        response <- sullyplot_azure_continue_chat(chat_messages, system_message = system_prompt, deployment_id = code_model, max_tokens = max_tokens, options = list(temperature = temperature))
       } else {
-        response <- sullyplot_openai_continue_chat(chat_messages, system_message = system_prompt, model_name = code_model, max_tokens = 512, options = list(temperature = temperature))
+        response <- sullyplot_openai_continue_chat(chat_messages, system_message = system_prompt, model_name = code_model, max_tokens = max_tokens, options = list(temperature = temperature))
       }
 
       code_response <- response$message

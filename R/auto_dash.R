@@ -41,11 +41,11 @@
 #'
 #' @importFrom rlang .data
 #' @export
-auto_dash <- function(data, num_plots = 6, custom_description="", dash_model="gpt-4", code_model="gpt-4", temperature=0.1, num_design_attempts=2, num_code_attempts=5, max_cols=10, save_messages=FALSE, save_dir="sullyplot_messages", save_name="auto_dash") {
+auto_dash <- function(data, num_plots = 6, custom_description="", dash_model="gpt-4", code_model="gpt-4", temperature=0.1, num_design_attempts=2, num_code_attempts=5, max_cols=10, save_messages=FALSE, save_dir="sullyplot_messages", save_name="auto_dash", max_tokens=16384) {
   input_df <- read_data(data)
   summary <- summarise_df(input_df, max_cols = max_cols)
   design_params <- auto_dash_design(data=data, summary=summary, num_plots=num_plots, custom_description=custom_description, dash_model=dash_model, temperature=temperature, num_design_attempts=num_design_attempts,
-                                max_cols=max_cols, save_messages=save_messages, save_dir=save_dir, save_name=save_name)
+                                max_cols=max_cols, save_messages=save_messages, save_dir=save_dir, save_name=save_name, max_tokens=max_tokens)
   plot_info_df <- design_params$plot_info_df
   usage_tokens <- as.list(design_params$usage_tokens)
   log(sprintf("Dashboard design completed using %d prompt tokens and %d completion tokens", usage_tokens$prompt_tokens, usage_tokens$completion_tokens))
@@ -54,7 +54,7 @@ auto_dash <- function(data, num_plots = 6, custom_description="", dash_model="gp
   all_plots <- lapply(seq_along(plot_info_df$input_columns), function(idx) {
     log(sprintf("\nGenerating plot %d using the columns: %s", idx, paste(plot_info_df$input_columns[[idx]], collapse = ", ")))
     tryCatch({
-      auto_plot_results <- auto_plot(input_df, plot_info_df$input_columns[[idx]], plot_info_df$descriptions[[idx]], num_code_attempts, code_model, save_messages, save_dir, sprintf("%s_plot_%d", save_name, idx))
+      auto_plot_results <- auto_plot(input_df, plot_info_df$input_columns[[idx]], plot_info_df$descriptions[[idx]], num_code_attempts, code_model, save_messages, save_dir, sprintf("%s_plot_%d", save_name, idx), max_tokens=max_tokens)
       usage_tokens <- as.list(auto_plot_results$usage_tokens)
       log(sprintf("Plot %d completed using %d prompt tokens and %d completion tokens", idx, usage_tokens$prompt_tokens, usage_tokens$completion_tokens))
       return(auto_plot_results$plot_obj)

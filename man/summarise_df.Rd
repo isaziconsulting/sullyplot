@@ -10,14 +10,10 @@ summarise_df(df, remove_cols = TRUE, max_cols = 10)
 \arguments{
 \item{df}{- the data frame to be analysed}
 
-\item{remove_cols}{- whether to remove columns from the summary if there are more than the max. Default is `TRUE`.}
-
-\item{max_cols}{- the maximum number of columns to summarise if `remove_cols` is `TRUE`. Default is `10`.}
+\item{max_cols}{- the maximum number of columns to summarise. Default is `10`.}
 }
 \value{
-Returns a list containing two dataframes;clean_df and df_stats. 
-                                         clean_df will have 'cleaned' column names. 
-                                         stats_df will contain original and clean data as well some summary stats.
+Returns a df of summary stats for each column.
 }
 \description{
 summarise_df

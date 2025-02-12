@@ -8,8 +8,8 @@ sullyplot_azure_continue_chat(
   chat_messages,
   system_message = NULL,
   deployment_id = "gpt-4",
-  api_version = "2023-07-01-preview",
-  max_tokens = 150,
+  api_version = "2023-05-15",
+  max_tokens = 16384,
   options = list()
 )
 }

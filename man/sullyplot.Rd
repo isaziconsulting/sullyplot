@@ -2,6 +2,7 @@
 % Please edit documentation in R/sullyplot-package.R
 \docType{package}
 \name{sullyplot}
+\alias{sullyplot-package}
 \alias{sullyplot}
 \title{sullyplot: Package for automatically plotting R plots and dashboards using LLMs.}
 \description{
@@ -41,3 +42,7 @@ The \code{sullyplot} R Package provides a framework for automated plotting of gr
 }
 }
 
+\author{
+\strong{Maintainer}: Kelian Massa \email{kelian@isazi.ai}
+
+}

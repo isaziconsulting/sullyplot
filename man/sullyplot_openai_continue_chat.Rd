@@ -8,7 +8,7 @@ sullyplot_openai_continue_chat(
   chat_messages,
   system_message = NULL,
   model_name = "gpt-4",
-  max_tokens = 150,
+  max_tokens = 16384,
   options = list()
 )
 }

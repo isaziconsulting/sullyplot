@@ -16,7 +16,8 @@ auto_dash(
   max_cols = 10,
   save_messages = FALSE,
   save_dir = "sullyplot_messages",
-  save_name = "auto_dash"
+  save_name = "auto_dash",
+  max_tokens = 16384
 )
 }
 \arguments{

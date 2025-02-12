@@ -12,7 +12,8 @@ auto_plot(
   code_model = "gpt-4",
   save_messages = FALSE,
   save_dir = "",
-  save_name = "auto_plot"
+  save_name = "auto_plot",
+  max_tokens = 16384
 )
 }
 \arguments{

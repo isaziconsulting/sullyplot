@@ -155,13 +155,14 @@ Your previous response was:
 
 
 generate_code_prompt <- "I want to create this plot: %s
-    Please provide a function in R called 'plot_df' that takes a dataframe 'df' as its argument, processes it, and then directly returns a `ggplot` object.
-    The function must perform preprocessing, data transformation, statistical analyses, and plotting.
+    Please provide a function in R called 'plot_df' that takes a dataframe 'df' as its argument, processes it, and returns a ggplot object.
+    The function must use tidyverse packages where relevant to perform preprocessing, data transformation, statistical analyses, and plotting.
     Preprocessing includes:
-      - Converting numeric variables to factors with `as.factor()` when used categorically.
-      - For scatter, box and line plots, removing outliers and downsampling remaining data to 1000 rows when count > 1000 (use strategic downsampling if there is a category).
-      - Creating derived variables when necessary, such as computing aggregates, differences, or ratios that may be more informative for the plot.
-      - Handling missing values by imputation or removal, depending on the amount and nature of the missing data.
+      - Converting numeric variables to factors with as.factor() when used categorically.
+      - For scatter, box, and line plots, removing outliers and downsampling remaining data to 1000 rows when count > 1000, applying strategic downsampling if a categorical variable is present.
+      - Creating derived variables when necessary, such as computing aggregates, differences, or ratios that may enhance the plot.
+      - Handling missing values by imputation or removal, based on their extent and nature.
+      - Any additional grouping, aggregation, or summarisation required.
 
     *** STYLING RULES ***
       - Box plots should always be coloured by category.
